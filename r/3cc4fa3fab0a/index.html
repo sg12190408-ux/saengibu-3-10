@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="ko" data-svg-charts="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>이승훈 — 나의 생기부 내비게이터</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+  :root {
+    --primary: #71717a;
+    --primary-dark: #3f3f46;
+    --primary-light: #d4d4d8;
+    --primary-soft: #fafafa;
+    --ink: #1f2937;
+    --ink-soft: #4b5563;
+    --ink-muted: #9ca3af;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --line: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Pretendard', -apple-system, system-ui, '맑은 고딕', sans-serif; color: var(--ink); background: var(--bg); line-height:1.6; font-size:15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width:960px; margin:0 auto; padding:0 24px; }
+  .hero { background: linear-gradient(135deg, #a1a1aa 0%, #52525b 55%, #09090b 100%); color:white; padding:64px 0 88px; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; top:-100px; right:-80px; width:360px; height:360px; border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%); }
+  .hero::after { content:''; position:absolute; bottom:-120px; left:-60px; width:320px; height:320px; border-radius:50%; background: radial-gradient(circle, rgba(113,113,122,0.25), transparent 70%); }
+  .hero .container { position:relative; z-index:2; }
+  .hero-tag { display:inline-block; padding:6px 14px; border-radius:999px; background:rgba(255,255,255,0.18); backdrop-filter: blur(8px); font-size:13px; font-weight:600; margin-bottom:20px; }
+  .hero h1 { font-size:44px; font-weight:800; letter-spacing:-1px; line-height:1.2; margin-bottom:8px; }
+  .hero h1 .name { color:#d4d4d8; }
+  .hero-sub { font-size:18px; opacity:0.92; font-weight:500; margin-bottom:28px; }
+  .hero-oneliner { font-size:22px; font-weight:700; line-height:1.5; padding:24px 28px; border-left:4px solid #d4d4d8; background:rgba(255,255,255,0.08); border-radius:0 12px 12px 0; backdrop-filter: blur(10px); }
+  .hero-oneliner em { color:#d4d4d8; font-style:normal; font-weight:800; }
+  .hero-meta { display:flex; gap:20px; margin-top:24px; flex-wrap:wrap; font-size:14px; opacity:0.85; }
+  .toc { position:sticky; top:0; z-index:50; background:white; border-bottom:1px solid var(--line); padding:12px 0; overflow-x:auto; }
+  .toc-inner { display:flex; gap:4px; max-width:960px; margin:0 auto; padding:0 24px; white-space:nowrap; }
+  .toc a { padding:8px 14px; border-radius:8px; color:var(--ink-soft); text-decoration:none; font-size:13px; font-weight:600; }
+  .toc a:hover { background:var(--primary-soft); color:var(--primary-dark); }
+  section { padding:56px 0; border-bottom:1px solid var(--line); }
+  .sec-num { display:inline-block; font-size:13px; font-weight:800; color:var(--primary); letter-spacing:2px; margin-bottom:8px; }
+  .sec-title { font-size:30px; font-weight:800; letter-spacing:-0.5px; margin-bottom:6px; }
+  .sec-sub { font-size:15px; color:var(--ink-soft); margin-bottom:32px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:720px) { .grid-3 { grid-template-columns:1fr; } }
+  .radar-wrap { display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:center; }
+  @media (max-width:720px) { .radar-wrap { grid-template-columns:1fr; } }
+  .radar-canvas-wrap { background:var(--primary-soft); border-radius:16px; padding:16px; aspect-ratio:1/1; min-height:340px; position:relative; }
+  .radar-canvas-wrap canvas { display:block; width:100% !important; height:100% !important; }
+  .radar-stats { display:flex; flex-direction:column; gap:12px; }
+  .radar-row { display:grid; grid-template-columns:110px 1fr 40px; align-items:center; gap:12px; padding:10px 14px; background:var(--primary-soft); border-radius:10px; }
+  .radar-row .label { font-weight:700; font-size:14px; }
+  .radar-row .bar { display:block; width:100%; height:10px; background:#fff; border:1px solid var(--primary-light); border-radius:999px; overflow:hidden; }
+  .radar-row .fill { display:block; height:100%; background:var(--primary); border-radius:999px; min-width:6px; }
+  .radar-row .num { text-align:right; font-weight:800; font-size:14px; color:var(--primary-dark); }
+  .radar-row.high .fill { background:linear-gradient(90deg, var(--primary), #3f3f46); }
+  .closing { background:linear-gradient(135deg, #d4d4d8, var(--primary-soft)); border-radius:20px; padding:32px; text-align:center; margin-top:32px; }
+  .closing-title { font-size:22px; font-weight:800; color:var(--primary-dark); margin-bottom:12px; }
+  .closing-body { font-size:15px; color:var(--ink-soft); line-height:1.7; }
+  .kw-cloud { background:linear-gradient(135deg, var(--primary-soft), white); border-radius:16px; padding:32px; min-height:200px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; }
+  .kw { padding:8px 16px; border-radius:999px; background:white; border:1.5px solid var(--primary-light); font-weight:600; color:var(--primary-dark); }
+  .kw.lg { font-size:28px; padding:12px 24px; background:var(--primary); color:white; border-color:var(--primary); }
+  .kw.md { font-size:20px; padding:10px 20px; background:#a1a1aa; color:white; border-color:#a1a1aa; }
+  .kw.sm { font-size:14px; }
+  .kw-grade-bar { margin-top:24px; background:white; border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .legend { display:flex; gap:16px; margin-top:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft); }
+  .legend span { display:inline-flex; align-items:center; gap:4px; }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:3px; }
+  .footsteps { display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-bottom:24px; position:relative; }
+  .footsteps::before { content:''; position:absolute; top:50px; left:12%; right:12%; height:2px; background:repeating-linear-gradient(90deg, var(--primary-light) 0 8px, transparent 8px 16px); z-index:0; }
+  .step { text-align:center; position:relative; z-index:1; padding:16px 12px; }
+  .step-icon { width:100px; height:100px; margin:0 auto 12px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:44px; background:white; border:3px solid var(--primary-light); }
+  .step.active .step-icon { border-color:var(--primary); box-shadow:0 0 0 6px rgba(113,113,122,0.18); }
+  .step.weak .step-icon { border-color:#71717a; border-style:dashed; }
+  .step-pct { font-size:28px; font-weight:800; color:var(--primary-dark); margin-top:4px; }
+  .step.weak .step-pct { color:#71717a; opacity:0.7; }
+  .step-name { font-weight:700; font-size:15px; margin-top:4px; }
+  .step-desc { font-size:12px; color:var(--ink-muted); margin-top:4px; }
+  .moment { background:white; border:1px solid var(--line); border-radius:16px; padding:24px; transition:transform 0.2s, box-shadow 0.2s; }
+  .moment:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.06); }
+  .moment-badge { display:inline-block; padding:4px 10px; background:var(--primary-soft); color:var(--primary-dark); font-size:11px; font-weight:700; border-radius:6px; margin-bottom:10px; }
+  .moment-pattern { display:inline-block; padding:4px 10px; background:#d4d4d8; color:#27272a; font-size:11px; font-weight:700; border-radius:6px; margin-bottom:10px; margin-left:6px; }
+  .moment-quote { font-size:14px; line-height:1.7; color:var(--ink-soft); border-left:3px solid var(--primary); padding-left:12px; margin:12px 0; font-style:italic; }
+  .moment-why { font-size:13px; padding:12px; background:var(--primary-soft); border-radius:10px; color:var(--primary-dark); font-weight:500; }
+  .signal-row { display:grid; grid-template-columns:36px 140px 1fr; gap:16px; padding:16px 0; align-items:start; border-bottom:1px solid var(--line); }
+  .signal-row:last-child { border-bottom:none; }
+  .signal-dot { font-size:22px; }
+  .signal-label { font-weight:700; font-size:14px; }
+  .signal-detail { font-size:13px; color:var(--ink-soft); }
+  .signal-detail .h-구체화 { background:#dbeafe; padding:1px 4px; border-radius:3px; }
+  .signal-detail .h-개별화 { background:#d1fae5; padding:1px 4px; border-radius:3px; }
+  .signal-detail .h-총평 { background:#fde68a; padding:1px 4px; border-radius:3px; }
+  .signal-detail .stale { background:#fecaca; padding:1px 4px; border-radius:3px; text-decoration:line-through; text-decoration-color:#ef4444; }
+  .signal-fix { margin-top:10px; padding:10px 12px; background:var(--primary-soft); border-radius:8px; font-size:13px; color:var(--primary-dark); }
+  .pattern-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center; }
+  @media (max-width:720px) { .pattern-grid { grid-template-columns:1fr; } }
+  .pattern-list { display:flex; flex-direction:column; gap:10px; }
+  .pattern-item { display:grid; grid-template-columns:24px 1fr 60px; align-items:center; gap:12px; padding:12px 14px; background:white; border:1px solid var(--line); border-radius:10px; }
+  .pattern-item .pn { width:24px; height:24px; border-radius:50%; background:var(--primary); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .pattern-item.empty .pn { background:var(--ink-muted); }
+  .pattern-item .pname { font-weight:600; font-size:14px; }
+  .pattern-item .pcount { text-align:right; font-weight:800; font-size:16px; color:var(--primary-dark); }
+  .pattern-item.empty { background:#fef3c7; border-color:#fde68a; }
+  .pattern-item.empty .pcount { color:var(--ink-muted); }
+  .action-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:720px) { .action-grid { grid-template-columns:1fr; } }
+  .action-card { background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white; border-radius:16px; padding:24px; position:relative; overflow:hidden; }
+  .action-card::before { content:''; position:absolute; top:-40px; right:-40px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.1); }
+  .action-num { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-weight:800; margin-bottom:14px; position:relative; z-index:1; }
+  .action-title { font-size:17px; font-weight:800; margin-bottom:12px; line-height:1.4; position:relative; z-index:1; }
+  .action-meta { font-size:12px; opacity:0.85; margin-bottom:12px; position:relative; z-index:1; }
+  .action-body { font-size:13px; line-height:1.6; opacity:0.95; position:relative; z-index:1; }
+  .action-deadline { margin-top:14px; padding:6px 10px; background:rgba(212,212,216,0.95); color:#27272a; border-radius:6px; font-size:11px; font-weight:700; display:inline-block; position:relative; z-index:1; }
+  .quest { background:white; border:2px solid var(--line); border-radius:16px; padding:24px; margin-bottom:16px; position:relative; }
+  .quest::before { content:''; position:absolute; left:-2px; top:-2px; bottom:-2px; width:6px; background:var(--primary); border-radius:16px 0 0 16px; }
+  .quest-header { display:flex; justify-content:space-between; align-items:start; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+  .quest-title { font-size:18px; font-weight:800; }
+  .quest-tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .qtag { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; }
+  .qtag.diff { background:#d4d4d8; color:#27272a; }
+  .qtag.dur { background:var(--primary-soft); color:var(--primary-dark); }
+  .qtag.kw { background:#e4e4e7; color:#3f3f46; }
+  .quest-why { font-size:13px; color:var(--ink-soft); margin-bottom:14px; padding:10px 12px; background:var(--bg); border-radius:8px; }
+  .quest-tracks { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:720px) { .quest-tracks { grid-template-columns:1fr; } }
+  .quest-track { border:1px dashed var(--line); border-radius:10px; padding:14px; }
+  .quest-track h4 { font-size:13px; font-weight:800; color:var(--primary-dark); margin-bottom:8px; }
+  .quest-track ul { list-style:none; font-size:13px; color:var(--ink-soft); }
+  .quest-track li { padding:3px 0; padding-left:14px; position:relative; }
+  .quest-track li::before { content:''; position:absolute; left:0; top:12px; width:6px; height:6px; border-radius:50%; background:var(--primary); }
+  .quest-bg { margin-top:14px; padding:14px 16px; background:var(--primary-soft); border-radius:10px; border-left:3px solid var(--primary); }
+  .quest-bg h4 { font-size:12px; font-weight:800; color:var(--primary-dark); margin-bottom:8px; letter-spacing:0.5px; }
+  .quest-bg ul { list-style:none; }
+  .quest-bg li { padding:5px 0 5px 14px; font-size:12.5px; color:var(--ink-soft); position:relative; line-height:1.6; }
+  .quest-bg li::before { content:'•'; position:absolute; left:2px; color:var(--primary-dark); font-weight:800; }
+  .quest-bg li b { color:var(--ink); }
+  .quest-howto { margin-top:12px; padding:14px 16px; background:white; border:1px solid var(--line); border-radius:10px; }
+  .quest-howto h4 { font-size:12px; font-weight:800; color:var(--primary-dark); margin-bottom:10px; letter-spacing:0.5px; }
+  .quest-howto ol { list-style:none; counter-reset:step; }
+  .quest-howto li { padding:6px 0 6px 28px; font-size:12.5px; color:var(--ink-soft); line-height:1.6; counter-increment:step; position:relative; }
+  .quest-howto li::before { content:counter(step); position:absolute; left:0; top:6px; width:20px; height:20px; border-radius:50%; background:var(--primary); color:white; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .quest-howto li b { color:var(--ink); }
+  .quest-howto code { background:var(--primary-soft); padding:1px 6px; border-radius:4px; font-family:'SF Mono', 'Menlo', 'Courier New', monospace; font-size:11.5px; color:var(--primary-dark); border:1px solid var(--primary-light); }
+  .quest-howto .step-meta { display:inline-block; margin-left:4px; padding:1px 7px; background:var(--primary-light); color:var(--primary-dark); border-radius:99px; font-size:10.5px; font-weight:700; vertical-align:middle; }
+  .quest-howto .step-result { display:block; margin-top:4px; font-size:11.5px; color:var(--primary-dark); padding:5px 8px; background:var(--primary-soft); border-radius:6px; border-left:2px solid var(--primary); }
+  .quest-meta { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
+  @media (max-width:720px) { .quest-meta { grid-template-columns:1fr; } }
+  .quest-meta-card { background:white; border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+  .quest-meta-card h5 { font-size:11px; font-weight:800; color:var(--primary-dark); margin-bottom:5px; letter-spacing:0.5px; }
+  .quest-meta-card p { font-size:12px; color:var(--ink-soft); line-height:1.5; }
+  .quest-meta-card a { color:var(--primary-dark); text-decoration:none; border-bottom:1px dotted var(--primary-dark); }
+  @media print { .toc { display:none; } body { background:white; font-size:11pt; } section { page-break-inside:avoid; padding:24pt 0; } .hero { padding:32pt 0; } }
+
+  /* === 모바일 (≤480px) 반응형 패치 === */
+  @media (max-width:480px) {
+    body { font-size:14px; }
+    .container { padding:0 16px; }
+    .hero { padding:44px 0 56px; }
+    .hero h1 { font-size:28px; letter-spacing:-0.5px; line-height:1.25; }
+    .hero-sub { font-size:14px; margin-bottom:20px; }
+    .hero-oneliner { font-size:14.5px; padding:16px 18px; line-height:1.65; border-radius:0 10px 10px 0; }
+    .hero-tag { font-size:11px; margin-bottom:14px; }
+    .hero-meta { font-size:11.5px; gap:8px 14px; margin-top:18px; }
+    .toc { padding:8px 0; }
+    .toc-inner { padding:0 16px; gap:2px; }
+    .toc a { padding:6px 10px; font-size:12px; }
+    section { padding:36px 0; }
+    .sec-num { font-size:11px; letter-spacing:1.5px; }
+    .sec-title { font-size:21px; }
+    .sec-sub { font-size:13.5px; margin-bottom:22px; }
+    .card { padding:16px; border-radius:14px; }
+    /* 레이더 차트 — aspect-ratio 1/1 풀고 고정 높이로 */
+    .radar-wrap { gap:18px; }
+    .radar-canvas-wrap { aspect-ratio:auto; min-height:0; height:300px; padding:10px; }
+    .radar-stats { gap:8px; }
+    .radar-row { grid-template-columns:84px 1fr 36px; padding:8px 10px; gap:8px; }
+    .radar-row .label { font-size:12.5px; }
+    .radar-row .num { font-size:12.5px; }
+    .closing { padding:18px !important; border-radius:14px; }
+    .closing-title { font-size:14px !important; }
+    .closing-body { font-size:13px !important; line-height:1.65; }
+    /* 키워드 클라우드 */
+    .kw-cloud { padding:22px 14px; min-height:auto; gap:8px; }
+    .kw { font-size:12px; padding:6px 12px; }
+    .kw.lg { font-size:18px; padding:8px 14px; }
+    .kw.md { font-size:14px; padding:7px 12px; }
+    .kw.sm { font-size:11.5px; padding:5px 10px; }
+    .kw-grade-bar { padding:14px; }
+    .kw-grade-bar h3 { font-size:13.5px; }
+    /* 머리·가슴·발 — 3열 유지하되 아이콘과 폰트 축소 */
+    .footsteps::before { display:none; }
+    .step { padding:8px 4px; }
+    .step-icon { width:62px; height:62px; font-size:26px; border-width:2px; margin-bottom:8px; }
+    .step.active .step-icon { box-shadow:0 0 0 4px rgba(245,158,11,0.18); }
+    .step-pct { font-size:18px; margin-top:2px; }
+    .step-name { font-size:11.5px; margin-top:2px; }
+    .step-desc { font-size:10px; margin-top:2px; line-height:1.4; }
+    /* 베스트 모먼트 */
+    .moment { padding:18px; }
+    .moment h3 { font-size:15px !important; }
+    .moment-quote { font-size:13px; line-height:1.65; padding-left:10px; }
+    .moment-why { font-size:12.5px; padding:10px; }
+    .moment-badge, .moment-pattern { font-size:10.5px; padding:3px 8px; }
+    /* 시그널 행 — 라벨/디테일을 세로 적층 */
+    .signal-row { grid-template-columns:28px 1fr; gap:8px 10px; padding:14px 0; }
+    .signal-row > div:nth-child(2) { grid-column:2; }
+    .signal-row .signal-detail { grid-column:1 / -1; margin-top:2px; }
+    .signal-dot { font-size:18px; }
+    .signal-label { font-size:13px; }
+    .signal-detail { font-size:12.5px; line-height:1.65; }
+    .signal-fix { font-size:12px; padding:9px 11px; margin-top:8px; }
+    .legend { font-size:11px; gap:10px; }
+    /* 패턴 분포 */
+    .pattern-grid { gap:16px; }
+    .pattern-item { grid-template-columns:22px 1fr 48px; padding:10px 12px; gap:10px; }
+    .pattern-item .pname { font-size:12.5px; }
+    .pattern-item .pcount { font-size:14px; }
+    /* 4주 액션 */
+    .action-card { padding:20px; border-radius:14px; }
+    .action-num { width:28px; height:28px; font-size:13px; }
+    .action-title { font-size:15.5px; margin-bottom:10px; }
+    .action-meta { font-size:11px; }
+    .action-body { font-size:12.5px; line-height:1.65; }
+    .action-deadline { font-size:10.5px; padding:5px 9px; }
+    /* 탐구 퀘스트 */
+    .quest { padding:18px; border-radius:14px; }
+    .quest-header { gap:6px; margin-bottom:10px; }
+    .quest-title { font-size:15.5px; line-height:1.4; }
+    .qtag { font-size:10px; padding:2px 8px; }
+    .quest-why { font-size:12.5px; padding:10px 12px; line-height:1.65; }
+    .quest-bg, .quest-howto { padding:12px 14px; }
+    .quest-bg h4, .quest-howto h4 { font-size:11.5px; }
+    .quest-bg li { font-size:12px; padding:4px 0 4px 12px; }
+    .quest-howto li { font-size:12px; padding:6px 0 6px 26px; line-height:1.65; }
+    .quest-howto li::before { width:18px; height:18px; font-size:10.5px; top:7px; }
+    .quest-howto code { font-size:11px; padding:1px 5px; }
+    .quest-howto .step-meta { font-size:10px; padding:1px 6px; }
+    .quest-howto .step-result { font-size:11px; padding:5px 8px; margin-top:4px; }
+    .quest-track { padding:12px; }
+    .quest-track h4 { font-size:12.5px; }
+    .quest-track li { font-size:12.5px; }
+    .quest-meta { gap:8px; }
+    .quest-meta-card { padding:10px 12px; }
+    .quest-meta-card h5 { font-size:10.5px; }
+    .quest-meta-card p { font-size:11.5px; }
+  }
+
+  /* === 노션 임베드 환경에서 더 자연스럽게 === */
+  html, body { overscroll-behavior:contain; }
+  /* sticky toc가 노션 임베드 안에서 어색할 수 있어 살짝 조정 */
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag">기계가 움직이는 원리를 끝까지 풀어가는 너 · 2026.05.06</span>
+    <h1>1·2학년이 한 방향을 가리키는<br><span class="name">승훈</span>이의 기록, 한 장에.</h1>
+    <p class="hero-sub">3학년 10반 17번 이승훈 · 기계공학·기전공학 지망</p>
+    <div class="hero-oneliner">
+      승훈아, 너의 생기부는 <em>'기계가 어떻게 움직이는지'</em>를 1학년부터 2학년까지 한 줄로 끌고 온 보기 드문 기록이야.<br>유체역학·열역학·회전 운동·자기유변유체·CNN 결함 탐지까지, 모든 활동이 <em>'기계 시스템의 원리와 제어'</em>라는 한 점을 가리켜.
+    </div>
+    <div class="hero-meta">
+      <span>분석일: 2026.05.06</span>
+      <span>진로: 기계공학·기전공학</span>
+      <span>담임 정슬기 선생님</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="toc-inner">
+  <a href="#s2">② 6대 역량</a><a href="#s3">③ 키워드 맵</a><a href="#s4">④ 머리·가슴·발</a>
+  <a href="#s5">⑤ 베스트 모먼트</a><a href="#s6">⑥ 시그널</a><a href="#s7">⑦ 패턴</a>
+  <a href="#s8">⑧ 4주 액션</a><a href="#s9">⑨ 탐구 퀘스트</a>
+</div></nav>
+
+<section id="s2"><div class="container">
+  <span class="sec-num">SECTION 02</span>
+  <h2 class="sec-title">너의 학종 능력치, 한 화면에</h2>
+  <p class="sec-sub">2015 개정 교육과정 6대 핵심역량 기준으로 네 활동에서 추출한 점수야. 채점이 아니라 <b>"지금까지 쌓아둔 자산"</b>의 시각화로 봐줘.</p>
+  <div class="card">
+    <div class="radar-wrap">
+      <div class="radar-canvas-wrap"><svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid meet">
+<path d="M 200.0,127.0 L 221.7,139.5 L 221.7,164.5 L 200.0,177.0 L 178.3,164.5 L 178.3,139.5 Z" fill="none" stroke="#71717a26" stroke-width="1"/>
+<path d="M 200.0,102.0 L 243.3,127.0 L 243.3,177.0 L 200.0,202.0 L 156.7,177.0 L 156.7,127.0 Z" fill="none" stroke="#71717a26" stroke-width="1"/>
+<path d="M 200.0,77.0 L 265.0,114.5 L 265.0,189.5 L 200.0,227.0 L 135.0,189.5 L 135.0,114.5 Z" fill="none" stroke="#71717a26" stroke-width="1"/>
+<path d="M 200.0,52.0 L 286.6,102.0 L 286.6,202.0 L 200.0,252.0 L 113.4,202.0 L 113.4,102.0 Z" fill="none" stroke="#71717a26" stroke-width="1"/>
+<line x1="200" y1="152" x2="200.0" y2="52.0" stroke="#71717a33" stroke-width="1"/>
+<line x1="200" y1="152" x2="286.6" y2="102.0" stroke="#71717a33" stroke-width="1"/>
+<line x1="200" y1="152" x2="286.6" y2="202.0" stroke="#71717a33" stroke-width="1"/>
+<line x1="200" y1="152" x2="200.0" y2="252.0" stroke="#71717a33" stroke-width="1"/>
+<line x1="200" y1="152" x2="113.4" y2="202.0" stroke="#71717a33" stroke-width="1"/>
+<line x1="200" y1="152" x2="113.4" y2="102.0" stroke="#71717a33" stroke-width="1"/>
+<path d="M 200.0,70.0 L 276.2,108.0 L 272.7,194.0 L 200.0,224.0 L 130.7,192.0 L 122.1,107.0 Z" fill="#71717a40" stroke="#71717a" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="200.0" cy="70.0" r="4" fill="#71717a" stroke="#fff" stroke-width="2"/>
+<circle cx="276.2" cy="108.0" r="4" fill="#71717a" stroke="#fff" stroke-width="2"/>
+<circle cx="272.7" cy="194.0" r="4" fill="#71717a" stroke="#fff" stroke-width="2"/>
+<circle cx="200.0" cy="224.0" r="4" fill="#71717a" stroke="#fff" stroke-width="2"/>
+<circle cx="130.7" cy="192.0" r="4" fill="#71717a" stroke="#fff" stroke-width="2"/>
+<circle cx="122.1" cy="107.0" r="4" fill="#71717a" stroke="#fff" stroke-width="2"/>
+<text x="200.0" y="30.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">자기관리</text>
+<text x="303.9" y="96.0" text-anchor="start" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">지식정보처리</text>
+<text x="303.9" y="216.0" text-anchor="start" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">창의적 사고</text>
+<text x="200.0" y="286.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">심미적 감성</text>
+<text x="96.1" y="216.0" text-anchor="end" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">의사소통</text>
+<text x="96.1" y="96.0" text-anchor="end" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">공동체</text>
+</svg></div>
+      <div class="radar-stats">
+<div class="radar-row "><span class="label">자기관리</span><span class="bar"><span class="fill" style="width:82%"></span></span><span class="num">82</span></div>
+<div class="radar-row high"><span class="label">지식정보처리</span><span class="bar"><span class="fill" style="width:88%"></span></span><span class="num">88</span></div>
+<div class="radar-row "><span class="label">창의적 사고</span><span class="bar"><span class="fill" style="width:84%"></span></span><span class="num">84</span></div>
+<div class="radar-row "><span class="label">심미적 감성</span><span class="bar"><span class="fill" style="width:72%"></span></span><span class="num">72</span></div>
+<div class="radar-row "><span class="label">의사소통</span><span class="bar"><span class="fill" style="width:80%"></span></span><span class="num">80</span></div>
+<div class="radar-row high"><span class="label">공동체</span><span class="bar"><span class="fill" style="width:90%"></span></span><span class="num">90</span></div>
+</div>
+    </div>
+    <div class="closing" style="margin-top:24px;background:var(--primary-soft);padding:18px 22px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;margin-bottom:4px;">코치 한마디</div>
+      <div class="closing-body" style="font-size:14px;">승훈아, <b>공동체(90)</b>가 네 가장 큰 무기야 — 1학년 총무부장·칠판 관리 봉사 39시간, 2학년 봉사부장·이데아 동아리에서 '성실한 태도로 활동 전반에 안정감을 주었으며 자연스러운 리더십을 보임'이라고 두 번 적힐 정도면 진짜 자산이야. <b>지식정보처리(88)</b>는 자기유변유체 점성 측정 방법을 '소리 측정 → 슬로우 모션 영상 측정'으로 스스로 수정한 그 한 장면 하나만으로 충분히 입증돼. <b>심미적 감성(72)</b>이 상대적으로 낮은데 약점이 아니라 단지 발표·산출물에서 '시각화·디자인'에 한 번만 더 신경 써주면 채워지는 영역이야. 인포그래픽 한 장으로 해결돼.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s3" style="background:var(--primary-soft);"><div class="container">
+  <span class="sec-num">SECTION 03</span>
+  <h2 class="sec-title">너만의 키워드 3개</h2>
+  <p class="sec-sub">학종 평가의 한 가지 분명한 원칙: <b>"한 키워드로 1→2→3학년이 이어지면 학종에서 최고점"</b>.</p>
+  <div class="kw-cloud"><span class="kw lg">기계공학·기전공학</span><span class="kw lg">동역학·회전 운동·열역학</span><span class="kw md">자기유변유체·MR 댐퍼</span><span class="kw md">CNN 결함 탐지·자동제어</span><span class="kw">유체역학</span><span class="kw">CAD·공간기하</span><span class="kw sm">반발계수·마찰계수</span><span class="kw sm">아두이노 자동화</span><span class="kw sm">반도체·발광다이오드</span></div>
+  <div class="kw-grade-bar">
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:14px;">키워드 수직 연계 — 학년별 깊이</h3>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+<line x1="36" y1="164.0" x2="584" y2="164.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="168.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">0</text>
+<line x1="36" y1="129.0" x2="584" y2="129.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="133.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">4</text>
+<line x1="36" y1="94.0" x2="584" y2="94.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="98.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">8</text>
+<line x1="36" y1="59.0" x2="584" y2="59.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="63.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">12</text>
+<line x1="36" y1="24.0" x2="584" y2="24.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="28.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">16</text>
+<rect x="81.7" y="120.2" width="91.3" height="43.8" fill="#a1a1aa" rx="3"/>
+<rect x="81.7" y="102.8" width="91.3" height="17.5" fill="#71717a" rx="3"/>
+<rect x="81.7" y="85.2" width="91.3" height="17.5" fill="#3f3f46" rx="3"/>
+<text x="127.3" y="79.2" text-anchor="middle" font-size="13" font-weight="800" fill="#4b5563" font-family="Pretendard, sans-serif">9</text>
+<text x="127.3" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">1학년</text>
+<rect x="264.3" y="111.5" width="91.3" height="52.5" fill="#a1a1aa" rx="3"/>
+<rect x="264.3" y="59.0" width="91.3" height="52.5" fill="#71717a" rx="3"/>
+<rect x="264.3" y="24.0" width="91.3" height="35.0" fill="#3f3f46" rx="3"/>
+<text x="310.0" y="18.0" text-anchor="middle" font-size="13" font-weight="800" fill="#4b5563" font-family="Pretendard, sans-serif">16</text>
+<text x="310.0" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">2학년</text>
+<text x="492.7" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">3학년</text>
+</svg>
+    <div class="legend"><span><i style="background:#a1a1aa"></i>기계공학·기전공학</span><span><i style="background:#71717a"></i>동역학·회전·열역학</span><span><i style="background:#3f3f46"></i>자동제어·기전 융합</span></div>
+    <div class="closing" style="background:white;margin-top:18px;padding:14px 18px;text-align:left;border:1px dashed var(--primary);">
+      <div class="closing-body" style="font-size:13px;"><b>잘하고 있는 점:</b> 1학년 진로희망 '기계공학·기전공학' → 2학년 '기계 공학'으로 한 번도 흔들리지 않은 진로 일관성이 너의 가장 큰 강점이야. 1학년에 RC카·라인트레이싱·스파게티 교량·각운동량 부스로 시작한 흐름이, 2학년에 자기유변유체 MR 댐퍼·회전 운동 미분 탐구·열역학 인포그래픽·CNN 부품 결함 탐지로 한 단계씩 깊어지면서 '동역학과 자동제어'라는 한 점을 가리켜. 같은 진로 지원자 사이에서도 흔치 않은 일관성. 🌱 <b>다음 한 걸음:</b> 3학년 활동 1개에 <b>'메커트로닉스(기계+전자+제어)'</b>를 한 번 더 등장시키면 1·2학년 키워드가 3학년까지 수직으로 한 줄을 만들어 — 학종이 가장 좋아하는 '키워드 수직 연계' 완성.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s4"><div class="container">
+  <span class="sec-num">SECTION 04</span>
+  <h2 class="sec-title">머리 → 가슴 → 발</h2>
+  <p class="sec-sub">공부의 세 단계 지도. <b>머리(이론) → 가슴(탐구) → 발(실천·산출물)</b>까지 갔을 때 세특이 진짜 살아나.</p>
+  <div class="card">
+    <div class="footsteps">
+      <div class="step active"><div class="step-icon">🧠</div><div class="step-pct">32%</div><div class="step-name">머리 · 이론</div><div class="step-desc">수업·발표·이론 학습</div></div>
+      <div class="step active"><div class="step-icon">❤️</div><div class="step-pct">48%</div><div class="step-name">가슴 · 탐구</div><div class="step-desc">호기심에서 출발한 심화</div></div>
+      <div class="step weak"><div class="step-icon">🦶</div><div class="step-pct">20%</div><div class="step-name">발 · 실천</div><div class="step-desc">제작·자동화·공유</div></div>
+    </div>
+    <div class="closing" style="background:#e4e4e7;padding:18px 22px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;color:var(--primary-dark);margin-bottom:4px;">한 발 더</div>
+      <div class="closing-body" style="font-size:14px;color:#27272a;">승훈아, 너의 기록은 <b>탐구(가슴) 비중이 가장 크고</b> '발(실천)'도 절반은 와 있어. 라인트레이싱 RC카 코드 입력, 우드락 비행기 30초 비행 달성, 자기유변유체 3종 직접 제작 후 슬로우 모션 측정, CNN 축구선수 분류 웹서비스 제작, 버스 노선 시각화까지 — 직접 만져 만든 산출물이 이미 여럿이야. 한 걸음만 더 — <b>네가 만든 결과물을 다른 사람이 따라 할 수 있는 형태(설계도·코드 공개·인포그래픽 1쪽)로 정리해 공유</b>하는 단계까지만 한 번 더 가자. 자기유변유체 실험 보고서를 후배가 따라 할 수 있는 매뉴얼로 다듬는 식이면 충분해.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s5" style="background:var(--bg);"><div class="container">
+  <span class="sec-num">SECTION 05</span>
+  <h2 class="sec-title">너의 베스트 모먼트 3</h2>
+  <p class="sec-sub">생기부에서 가장 잘 쓰인 문장 3개. <b>왜 좋은지</b>를 우수 세특 패턴 분류로 풀어줄게.</p>
+  <div class="grid-3">
+<div class="moment">
+  <span class="moment-badge">🟢 과학과제 연구 · 2학년</span>
+  <span class="moment-pattern">패턴 ① 동기·과정·결과·확장 + ⑤ 반성적 실마리</span>
+  <h3 style="font-size:16px;font-weight:800;">자기유변유체 점성 변화 — MR 댐퍼 적용 가능성</h3>
+  <p class="moment-quote">"입자 농도·전류·온도를 조작 변인으로 설정해 철가루 농도를 달리한 유체 3종을 제작, 솔레노이드 실린더에 전류를 인가하고 슬로우 모션 영상으로 점성을 측정. 초기 '바닥 닿는 소리' 측정이 고농도에서 한계가 있음을 인식하고 측정 방법을 영상 측정으로 개선. 침전·굳음·온도 유지의 한계까지 변인 통제 어려움으로 정직하게 분석함."</p>
+  <div class="moment-why">측정 도구 한계를 스스로 진단하고 방법을 갈아 끼운 그 결정 한 줄이 학종 평가자의 시선을 정확히 잡아. 기계공학에서 가장 중요한 '실험 동력학'의 모범 사례.</div>
+</div>
+<div class="moment">
+  <span class="moment-badge">🟢 인공지능 기초 · 2학년</span>
+  <span class="moment-pattern">패턴 ② 키워드 연계 + ⑥ 머리·가슴·발 통합</span>
+  <h3 style="font-size:16px;font-weight:800;">CNN으로 기계 부품 결함 탐지 — 열화상 이상 패턴</h3>
+  <p class="moment-quote">"합성곱 신경망(CNN)을 활용해 기계의 열화상 이미지에서 이상 온도 패턴을 분석, 부품 결함을 탐지·경고하는 모델을 탐색함. 2D 이미지를 3D로 변환해 이상 추측 원인과 개선 정보를 제공하는 방향까지 직접 제안."</p>
+  <div class="moment-why">'기계공학+AI'라는 같은 진로 지원자 중 흔치 않은 조합. 1학년 RC카 라인트레이싱 흐름이 여기서 자동제어·메커트로닉스로 명확히 발전한 결정적 장면.</div>
+</div>
+<div class="moment">
+  <span class="moment-badge">🟢 수학Ⅱ · 2학년</span>
+  <span class="moment-pattern">패턴 ② 키워드 연계 + ① 동기·과정·결과</span>
+  <h3 style="font-size:16px;font-weight:800;">회전 운동 — 각속도·각가속도를 미분으로 풀다</h3>
+  <p class="moment-quote">"각속도를 단위 시간당 회전각의 변화로 정의하고 미분으로 분석, 그 변화율로 각가속도를 도출. 회전 관성을 질량과 회전축 거리로 설명하며 토크-회전관성-각가속도 상관관계를 확인. 톱니바퀴 같은 기계 예시로 회전 운동 효율과 성능 평가에 수학적 방법을 적용."</p>
+  <div class="moment-why">기계 시스템의 회전 운동을 '미분이라는 도구'로 정확히 풀어낸 사례. 수학을 진로에 끼워 넣는 모범 답안이고, 학종 평가자가 가장 신뢰하는 '교과-진로 연결' 패턴.</div>
+</div></div>
+</div></section>
+
+<section id="s6"><div class="container">
+  <span class="sec-num">SECTION 06</span>
+  <h2 class="sec-title">시그널 점검 — 3색 형광펜</h2>
+  <p class="sec-sub">모든 세특을 <b>구체화 → 개별화 → 성장 총평</b> 3축으로 분해했어. 빈 칸이 어디인지 한눈에.</p>
+  <div class="card">
+    <div class="legend" style="margin-bottom:16px;">
+      <span><i style="background:#dbeafe"></i> 구체화</span>
+      <span><i style="background:#d1fae5"></i> 개별화</span>
+      <span><i style="background:#fde68a"></i> 성장 총평</span>
+      <span><i style="background:#fecaca"></i> 상투 표현</span>
+    </div>
+
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">과학과제 연구 · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">최상급 · 진로 직결 정량 탐구</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>입자 농도·전류·온도를 조작 변인으로, 철가루 농도 3종 유체를 솔레노이드 실린더에서 슬로우 모션 영상으로 점성 측정.</span> <span class='h-개별화'>측정 한계를 인식하고 '소리 측정 → 영상 측정'으로 스스로 방법 변경, 침전·굳음·온도 유지 한계까지 정직하게 보고.</span> <span class='h-총평'>자기유변유체-MR 댐퍼-암페어 법칙까지 구두 설명 가능한 수준이라는 평까지 도달한 모범 사례.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">물리학Ⅰ·수학Ⅰ·수학Ⅱ · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">진로-교과 일관 연결</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>물리학Ⅰ 인포그래픽으로 열역학·열기관 효율-엔트로피 한계를 구조적으로 정리, 압력-부피 그래프 문항을 직접 출제.</span> <span class='h-개별화'>수학Ⅰ에서 뉴턴 냉각법칙으로 시간-온도 곡선을 지수함수로 분석, 수학Ⅱ에서 회전관성·토크·각가속도까지 미분으로 연결.</span> <span class='h-총평'>'기계 시스템의 효율 평가에 수학을 적용할 수 있다'는 본인 결론까지 명시된 진로 직결 사례.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟡</span>
+  <div>
+    <div class="signal-label">기하 (진로선택) · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">한 줄만 더하면 완성</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>스포츠 경기장의 포물선·타원 이차곡선 분석, 3D CAD로 공간좌표·벡터를 부품 모델링에 적용해본 경험까지 적혀 있음.</span> <span class='h-개별화'>음향 설계·시야 확보·구조 안전성까지 비교 분석한 점 좋음.</span> 다만 마지막이 <span class='stale'>학업적 역량과 탐구적 태도를 갖춤</span>으로 닫혀 <b>본인이 직접 모델링한 부품의 결과물</b>이 비어 있어.<div class="signal-fix">3학년에 같은 흐름이라면 "본인이 모델링한 부품 1점(예: 캠 또는 베어링 하우징)의 도면·렌더링 1쪽"을 산출물로 첨부해달라고 요청하자. 발(실천)까지 채워.</div></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟡</span>
+  <div>
+    <div class="signal-label">2학년 진로활동 (말미)</div>
+    <div style="font-size:11px;color:var(--ink-muted);">총평이 일반론으로 닫힘</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>마찰계수 직접 측정·무기염료 합성·화학전지 전극전위·연료감응형 태양전지 등 기계공학 연계 토픽이 알차게 누적.</span> 다만 <span class='stale'>물리·화학의 기초 개념을 실제 기계 시스템과 연결해 해석하려는 시도가 돋보이며 앞으로의 발전이 기대됨</span>으로 닫혀 학생 고유의 다음 질문이 비어 있어.<div class="signal-fix">3학년 진로활동 마지막 한 줄은 '이 활동 후 다음에 무엇을 더 알고 싶어졌는가'를 본인 언어로 적어달라고 요청하자. 예: '마찰계수 제어가 자동차 ABS·로봇 관절에 어떻게 적용되는지 더 알고 싶어졌다.'</div></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🔴</span>
+  <div>
+    <div class="signal-label">1학년 수학</div>
+    <div style="font-size:11px;color:var(--ink-muted);">진로 연결 한 줄만 남음</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>관심 분야와 수학을 연결하는 활동에서 자료를 정교화하는 능력을 보임</span> 정도까지는 적혀 있지만, 그 앞뒤가 <span class='stale'>기본적인 수학적 개념을 이해하는 능력을 지님·성실히 참여함·향상이 기대됨·창의적이고 의미 있는 아이디어를 산출함</span>으로 가득해 학생 개인 색이 흐려.<div class="signal-fix">걱정 마, 1학년 기록은 손댈 수 없어. 다만 면접·자기소개서에서 '내가 1학년에 수학으로 무엇을 다뤘는지' 한 문장(예: 함수 기반 진로 탐구)을 미리 준비해두자. 2학년 뉴턴 냉각·회전관성으로 충분히 만회된 상태야.</div></div>
+</div>
+  </div>
+</div></section>
+
+<section id="s7" style="background:var(--bg);"><div class="container">
+  <span class="sec-num">SECTION 07</span>
+  <h2 class="sec-title">너의 세특 패턴 분포</h2>
+  <p class="sec-sub">우수 세특 사례를 분석해 도출한 6가지 패턴.</p>
+  <div class="card">
+    <div class="pattern-grid">
+      <div><svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;max-width:280px;margin:0 auto;">
+<path d="M 140.00 44.00 A 96 96 0 0 1 232.34 166.27 L 195.79 155.87 A 58 58 0 0 0 140.00 82.00 Z" fill="#a1a1aa" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 232.34 166.27 A 96 96 0 0 1 89.46 221.62 L 109.47 189.31 A 58 58 0 0 0 195.79 155.87 Z" fill="#71717a" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 89.46 221.62 A 96 96 0 0 1 44.41 131.14 L 82.25 134.65 A 58 58 0 0 0 109.47 189.31 Z" fill="#52525b" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 44.41 131.14 A 96 96 0 0 1 75.33 69.06 L 100.93 97.14 A 58 58 0 0 0 82.25 134.65 Z" fill="#3f3f46" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 75.33 69.06 A 96 96 0 0 1 140.00 44.00 L 140.00 82.00 A 58 58 0 0 0 100.93 97.14 Z" fill="#27272a" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<text x="140" y="136" text-anchor="middle" font-size="11" font-weight="600" fill="#9ca3af" font-family="Pretendard, sans-serif">총 세특 패턴</text>
+<text x="140" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="#1f2937" font-family="Pretendard, sans-serif">17건</text>
+</svg></div>
+      <div class="pattern-list"><div class="pattern-item"><span class="pn">1</span><span class="pname">동기·과정·결과·확장</span><span class="pcount">5건</span></div><div class="pattern-item"><span class="pn">2</span><span class="pname">키워드 연계형</span><span class="pcount">5건</span></div><div class="pattern-item"><span class="pn">3</span><span class="pname">호기심·탐구형</span><span class="pcount">3건</span></div><div class="pattern-item empty"><span class="pn">4</span><span class="pname">질문 인용형</span><span class="pcount">0건</span></div><div class="pattern-item"><span class="pn">5</span><span class="pname">반성적 실마리형</span><span class="pcount">2건</span></div><div class="pattern-item"><span class="pn">6</span><span class="pname">머리·가슴·발 통합</span><span class="pcount">2건</span></div></div>
+    </div>
+    <div class="closing" style="background:#e4e4e7;padding:18px 22px;margin-top:20px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;color:var(--primary-dark);margin-bottom:6px;">가장 시급한 패턴: ④ 질문 인용형</div>
+      <div class="closing-body" style="font-size:14px;color:#27272a;">승훈아, 6패턴 중 5개에 강점이 있고 ④ '질문 인용형'만 비어 있어. 너의 활동은 이미 결과물로 강한데, 평가자 시선이 가장 빨리 잡히는 건 '학생이 직접 던진 의문문' 한 줄이야. 3학년 진로활동·과제 발표·자율탐구 중 한 곳에서, 활동 도입에 <b>"왜 같은 모터에 같은 전류를 흘려도 회전 토크가 달라질까?"</b>처럼 따옴표로 묶은 의문문 한 문장만 넣어달라고 요청해보자. 30초면 추가되고, 그 한 줄이 너의 호기심을 보여주는 가장 강력한 무기가 돼.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s8"><div class="container">
+  <span class="sec-num">SECTION 08</span>
+  <h2 class="sec-title">다음 4주 액션 카드</h2>
+  <p class="sec-sub">진단으로 끝내지 않을게. 6월 3일까지 네가 할 수 있는 <b>구체적인 행동 3가지</b>.</p>
+  <div class="action-grid">
+<div class="action-card">
+  <div class="action-num">1</div>
+  <div class="action-meta">메커트로닉스 차별화</div>
+  <h3 class="action-title">'기계+전자+제어' 한 시스템 인포그래픽 1쪽</h3>
+  <p class="action-body">2학년 자기유변유체 MR 댐퍼 + CNN 부품 결함 탐지 + 회전관성-토크 미분 분석을 한 시스템(예: '능동 진동 제어 차량 서스펜션')으로 묶어 1쪽 인포그래픽으로 정리해보자. 센서 → 데이터 처리 → 제어 신호 → 액추에이터까지 한 흐름. 면접·자기소개서 핵심 사례로 직결되는 한 장.</p>
+  <span class="action-deadline">~ 5월 16일</span>
+</div>
+<div class="action-card">
+  <div class="action-num">2</div>
+  <div class="action-meta">세특 보강 · 질문 인용형</div>
+  <h3 class="action-title">활동 도입에 의문문 한 줄 박기</h3>
+  <p class="action-body">다음 진로활동·과제 발표 때 도입 한 문장을 따옴표로: <b>"왜 같은 모터에 같은 전류를 흘려도 회전 토크가 달라질까?"</b> 같은 식. 담임샘·교과샘께 '이 문장을 활동 동기로 기록해주세요'라고 부탁해두자. 패턴 ④ 한 번에 채워져.</p>
+  <span class="action-deadline">~ 5월 24일</span>
+</div>
+<div class="action-card">
+  <div class="action-num">3</div>
+  <div class="action-meta">진로 일관성 명시</div>
+  <h3 class="action-title">기계공학·기전공학 일관성 한 줄 박기</h3>
+  <p class="action-body">1학년부터 흔들림 없이 이어진 진로를 3학년 진로활동에 본인 언어로 한 번 더 박아두자. 예: "1학년 RC카 라인트레이싱에서 시작해 자기유변유체 MR 댐퍼·CNN 결함 탐지까지, 기계가 스스로 상태를 인지하고 제어되는 메커트로닉스가 내 길이라고 좁혔다." 한 줄이 학종에서 큰 무게.</p>
+  <span class="action-deadline">~ 6월 3일</span>
+</div></div>
+</div></section>
+
+<section id="s9" style="background:var(--primary-soft);"><div class="container">
+  <span class="sec-num">SECTION 09</span>
+  <h2 class="sec-title">이번 학기 탐구 퀘스트 3</h2>
+  <p class="sec-sub">너의 키워드를 한 단계 더 깊게 가져갈 탐구 3종.</p>
+
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">⚙ 1. MR 댐퍼 응답 특성 — 자기유변유체 후속 탐구</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★★</span>
+      <span class="qtag dur">3~4주</span>
+      <span class="qtag kw">키워드 연결: 자기유변유체·자동제어·동역학</span>
+    </div>
+  </div>
+  <div class="quest-why">🌱 <b>왜 이 활동이 너에게 좋을까?</b> 2학년 과학과제 연구에서 '점성 변화'까지는 측정했지만, 실제 댐퍼 응답(전류 변화에 대한 감쇠력 시간 응답)까지는 아직 못 갔어. 그 한 단계 더가 <b>메커트로닉스의 핵심</b>이야. MR 유체를 직접 다뤄본 학생은 흔치 않고, 거기에 시간 응답 + 전류 제어까지 더하면 "왜 자기유변유체에서 그쳤지?"라는 면접 질문에 곧바로 답할 수 있는 너만의 이야기가 손에 남게 돼.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>자기유변유체(MR fluid):</b> 자기장이 걸리면 사슬 구조가 형성되어 점성이 수십 배로 커지는 스마트 유체. 자동차 능동 서스펜션·인공관절·진동 흡수에 쓰여.</li>
+      <li><b>감쇠력(Damping force):</b> 진동을 줄이는 힘 F = c·ẋ. MR 댐퍼는 전류로 감쇠계수 c를 실시간 바꿀 수 있다는 게 핵심.</li>
+      <li><b>응답 시간(Rise time):</b> 입력 변화 → 출력 안정까지 걸리는 시간. MR 댐퍼는 보통 10~30 ms로 매우 빨라 — 그래서 'semi-active' 제어가 가능해.</li>
+      <li><b>PWM(Pulse Width Modulation):</b> 디지털 신호로 평균 전류·전압을 조절하는 방법. 아두이노 <code>analogWrite()</code>가 바로 PWM이야.</li>
+      <li><b>Semi-active control:</b> 액추에이터로 직접 힘을 만들지 않고, '감쇠 특성'만 실시간 바꿔 진동을 다스리는 방식. MR 댐퍼의 가장 큰 장점이고 자동차·교량에서 실제 쓰여.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실험형 / 실천형</h4><ul><li>기존 솔레노이드+유체 장치에 가속도계(스마트폰 센서) 부착해 진동 감쇠 곡선 측정</li><li>전류 0/0.5/1.0A 단계 변화로 응답 시간(rise time) 비교</li><li>아두이노 PWM 전류 제어 — 1학년 라인트레이싱 코딩 경험 재활용</li><li>'능동 서스펜션 개념도' 1쪽 인포그래픽으로 산출</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>KCI·DBpia '자기유변유체 응답', 'MR damper semi-active control'</li><li>대한기계학회지의 차량 진동 제어 사례</li><li>한국과학기술원(KIST)·자동차연구원 기술자료실</li><li>단행본: '기계진동학(Rao)' 감쇠계 단원, '메카트로닉스 시스템 설계' 일부</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>스마트폰 가속도계로 자유진동 곡선 1장 찍기</b><span class="step-meta">⏱ 30분~1h</span><br>'Phyphox' 앱(<code>phyphox.org</code>) 설치 → '가속도(g 없음)' 모듈 선택. 책상에 캔틸레버(자·플라스틱 막대)를 고정하고 끝에 스마트폰 부착 → 한 번 튕겨서 5~10초 진동 기록. CSV로 내보내 Excel에서 그래프 그리기. <code>x(t) = A·e^(-ζω_n·t)·cos(ω_d·t)</code> 형태가 보일 거야 — <b>감쇠비 ζ</b>를 로그감쇠법(연속 두 피크 비)으로 산출.<span class="step-result">✓ 완성품: 자유진동 곡선 .png 1장 + 감쇠비 ζ 한 숫자. 다음 단계 '비교 기준선'.</span></li>
+      <li><b>MR 유체 셀에 전류 0 / 0.5 / 1.0 A 인가하며 응답 비교</b><span class="step-meta">⏱ 1~2h</span><br>2학년 때 만든 솔레노이드+유체 장치 재활용. 가변 저항이나 직류전원으로 전류 단계 설정 → 같은 초기 변위에서 자유진동 측정 3회씩. Excel에서 세 곡선을 한 그래프에 겹쳐 그리고 <code>감쇠비 ζ vs 전류 I</code> 표 정리. 안전: 코일 발열 30초 이상 연속 ×, 절연 장갑 착용.<span class="step-result">✓ 완성품: 전류별 진동 곡선 비교 그래프 + ζ-I 표 1장.</span></li>
+      <li><b>아두이노 PWM으로 응답 시간 측정</b><span class="step-meta">⏱ 2~3h</span><br>아두이노 + MOSFET(IRFZ44N 등)으로 코일 PWM 회로 구성. 핵심 코드 한 줄: <code>analogWrite(9, 128);</code>(50% 듀티). LTspice(<code>analog.com</code> 무료)에서 RL 회전회로 시뮬로 전류 상승 시간 먼저 예측 → 실측과 비교. 스마트폰 슬로모(960fps)로 진동 영상 촬영 후 프레임 분석으로 rise time 추출.<span class="step-result">✓ 완성품: PWM 듀티별 rise time 표 + LTspice 시뮬 .asc 파일 + 슬로모 영상.</span></li>
+      <li><b>능동 서스펜션 개념도 인포그래픽 1쪽 + 기계학회지 1편 인용</b><span class="step-meta">⏱ 2~3h</span><br>Tinkercad(<code>tinkercad.com</code>)로 차량 1/4 모델 3D 컨셉 → 캡처. Canva(<code>canva.com</code>)에서 A4 1매: <code>도로 입력</code> → <code>가속도계</code> → <code>제어기(전류 결정)</code> → <code>MR 댐퍼</code> → <code>차체</code>. 마지막에 KCI(<code>kci.go.kr</code>)에서 '자기유변유체 댐퍼 차량' 논문 1편 검색해 결과 비교 한 단락. 과학교사·물리교사께 5분 검토.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + KCI 인용 1건. 학종 면접 자기유변유체 후속편 핵심 자료.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· Phyphox 앱 (<a href="https://phyphox.org" target="_blank">phyphox.org</a>) — 스마트폰 가속도계<br>· LTspice (<a href="https://www.analog.com" target="_blank">analog.com/ltspice</a>) — 회로 시뮬<br>· Tinkercad (<a href="https://www.tinkercad.com" target="_blank">tinkercad.com</a>) — 3D 개념도<br>· KCI (<a href="https://www.kci.go.kr" target="_blank">kci.go.kr</a>) — 대한기계학회지 검색</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· 진동 곡선 데이터 .csv + 그래프 .png 4장<br>· LTspice 시뮬 파일 .asc 1개<br>· 보고서 6쪽 내외<br>· 능동 서스펜션 개념도 A4 1매</p></div>
+  </div>
+</div>
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">🛞 2. 마찰계수 제어 — ABS·로봇 관절 PID 시뮬레이션</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★☆</span>
+      <span class="qtag dur">2주</span>
+      <span class="qtag kw">키워드 연결: 동역학·자동제어·기전공학</span>
+    </div>
+  </div>
+  <div class="quest-why">🌱 <b>왜 이 활동이 너에게 좋을까?</b> 2학년 진로활동 '과학 심화실험'에서 마찰계수를 직접 측정하고 '기계 요소 설계와 동력 전달 효율'까지 갔지만, <b>제어 시나리오</b>는 다루지 않았어. 너의 회전 운동방정식 미분 탐구와 결합하면 "마찰을 모델로 잡는 동역학"이라는 한 단계 깊은 영역이 열려. PID라는 자동제어의 기본 언어를 한 번 손에 잡아두면, 3학년 면접에서 ABS든 로봇이든 "어느 곳에 어떻게 적용되는지"를 본인 언어로 풀 수 있어.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>슬립률(Slip ratio λ):</b> λ = (v_차량 - v_타이어)/v_차량. 타이어가 도로보다 얼마나 미끄러지는지의 비율. 0%는 완전 구름, 100%는 완전 잠김.</li>
+      <li><b>μ-λ 곡선:</b> 슬립률 λ가 0.15~0.20일 때 마찰계수 μ가 최대가 되는 종 모양 곡선. ABS의 목표는 이 정점 근처에서 작동시키는 것.</li>
+      <li><b>Stribeck 곡선:</b> 속도-마찰계수 그래프. 정지·경계·혼합·유체 윤활 4구간. 로봇 관절의 미세 제어에서 가장 골치 아픈 비선형성의 원인.</li>
+      <li><b>PID 제어:</b> u(t) = K_p·e + K_i·∫e dt + K_d·(de/dt). P는 현재 오차, I는 누적 오차, D는 변화율. 자동제어의 가장 기본 언어.</li>
+      <li><b>회전 운동방정식:</b> τ = I·α (= I·dω/dt). 너의 2학년 미분 탐구가 바로 이 식이고, ABS·관절 제어 둘 다 이 식 위에서 돌아가.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실험형 / 실천형</h4><ul><li>경사면 위 정지/운동 마찰계수 측정 5쌍(접촉면 3종)</li><li>Colab으로 ABS 시뮬레이터 — λ 변화에 따른 μ 곡선 재현</li><li>로봇 관절 마찰 모델(Stribeck) + PID 단순 시뮬</li><li>결과 1쪽 비교 인포그래픽으로 정리</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>대한기계학회·한국자동차공학회 'ABS 슬립 제어' 키워드</li><li>Pacejka 마찰모델 리뷰 논문(국내외 2~3편)</li><li>한국로봇학회지 관절 마찰 보상 제어 사례</li><li>단행본: '동역학(Hibbeler)' 마찰 단원, '제어공학 입문' PID 단원</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>경사면 실험으로 정지/운동 마찰계수 측정</b><span class="step-meta">⏱ 30분~1h</span><br>각도 조절 가능한 판 + 시료(고무·플라스틱·금속) 3종. 시료가 막 미끄러지는 임계각 θ_s 측정 → <code>μ_s = tan(θ_s)</code>. 이어 등속 미끄러질 때 각도 → μ_k. Phyphox '가속도'로 정량 검증. 표 작성: <code>접촉면 / μ_s / μ_k / σ(편차)</code>. 5쌍 측정으로 평균±편차 산출.<span class="step-result">✓ 완성품: 마찰계수 표 1장 + 측정 사진 3장. 시뮬에 넣을 입력값 확보.</span></li>
+      <li><b>Colab에서 μ-λ 곡선(Pacejka magic formula) 그리기</b><span class="step-meta">⏱ 1~2h</span><br>Google Colab에 새 노트북. Pacejka 단순화식:<br><code>import numpy as np, matplotlib.pyplot as plt</code><br><code>lam = np.linspace(0, 1, 200)</code><br><code>B,C,D,E = 10, 1.9, 1.0, 0.97  # 건조 아스팔트 예</code><br><code>mu = D*np.sin(C*np.arctan(B*lam - E*(B*lam - np.arctan(B*lam))))</code><br><code>plt.plot(lam, mu)</code> → λ ≈ 0.15~0.20에서 μ 정점이 보임. D값을 0.6(젖은 길)·0.3(빙판)으로 바꿔 3개 곡선을 한 그래프에.<span class="step-result">✓ 완성품: 노면별 μ-λ 곡선 1장 + 코드 .ipynb. ABS 목표점이 한눈에.</span></li>
+      <li><b>1/4 차량 모델 + PID로 슬립률 0.15 추종 시뮬</b><span class="step-meta">⏱ 2~3h</span><br>회전 운동방정식 <code>I·dω/dt = -μ(λ)·N·r + T_brake</code>를 Colab에서 4차 룽게-쿠타(<code>scipy.integrate.solve_ivp</code>)로 풀기. 목표 λ* = 0.15, PID로 브레이크 토크 결정: <code>T = Kp*e + Ki*∫e dt + Kd*de/dt</code>. (Kp, Ki, Kd) 세 조합 비교 → 정착 시간·오버슈트 표. ABS OFF/ON 정지거리 비교 그래프 1장.<span class="step-result">✓ 완성품: 정지거리 비교 그래프 + PID 게인 튜닝 표.</span></li>
+      <li><b>로봇 관절 Stribeck 보상 + 인포그래픽 1매</b><span class="step-meta">⏱ 2~3h</span><br>Stribeck 식 <code>F_f = (F_c + (F_s - F_c)·exp(-(v/v_s)²))·sgn(v) + σ·v</code>를 Colab에서 그리고, 관절 위치 제어 PID에 마찰 보상 항을 더했을 때/안 했을 때 위치 오차 비교. Canva A4 1매: <code>ABS μ-λ 곡선</code>(좌) + <code>로봇 관절 Stribeck</code>(우) + <code>공통 키워드: PID 자동제어</code>. 한국로봇학회지(<code>kros.org</code>) 1편 인용.<span class="step-result">✓ 완성품: A4 비교 인포그래픽 1매 + KCI 인용 1건 + Colab .ipynb 1개.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· Google Colab + numpy·scipy·matplotlib<br>· Phyphox 앱 (<a href="https://phyphox.org" target="_blank">phyphox.org</a>) — 가속도 측정<br>· KCI (<a href="https://www.kci.go.kr" target="_blank">kci.go.kr</a>) — 자동차공학회지·로봇학회지<br>· 단행본: 동역학(Hibbeler) 마찰 단원, 제어공학 입문 PID</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· Colab 노트북 1개 (.ipynb)<br>· 마찰계수 측정 표 + 사진<br>· 보고서 5쪽 내외<br>· ABS·관절 비교 인포그래픽 A4 1매</p></div>
+  </div>
+</div>
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">🤖 3. CNN 기반 부품 결함 탐지 — 베어링 진동 데이터 실측</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★☆</span>
+      <span class="qtag dur">3~4주(분산)</span>
+      <span class="qtag kw">키워드 연결: 메커트로닉스·AI·자동제어</span>
+    </div>
+  </div>
+  <div class="quest-why">🌱 <b>왜 이 활동이 너에게 좋을까?</b> 2학년 인공지능 기초에서 'CNN 열화상 결함 탐지'를 탐색했지만 <b>실제 데이터로 학습은 안 했어.</b> 후속편으로 베어링 진동 공개 데이터셋으로 모델을 직접 돌려보면 "기계공학+AI"가 1·2·3학년 수직으로 이어져 패턴 ② 키워드 연계가 완성돼. 무엇보다 <b>"AI 도구를 다룰 줄 아는 기계공학도"</b>라는 차별점을 직접 만들어보는 경험 — 면접 단골 질문 "왜 너인가?"에 답할 수 있는 한 장이 손에 남게 돼.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>CNN(Convolutional Neural Network):</b> 이미지·시계열의 국소 패턴을 합성곱 필터로 잡아내는 모델. '결함 진동의 모양 차이'를 알아서 학습해줘.</li>
+      <li><b>FFT(고속 푸리에 변환):</b> 시간 신호 → 주파수 성분 분해. 베어링 결함은 BPFI·BPFO·BSF 같은 <b>특정 주파수</b>에서 튀어나와 — CNN의 입력으로 가장 좋아.</li>
+      <li><b>스펙트로그램(Spectrogram):</b> 시간-주파수 2D 이미지. 진동을 '그림'으로 바꿔서 영상 CNN을 그대로 쓸 수 있게 해주는 표현 방법.</li>
+      <li><b>혼동행렬(Confusion Matrix):</b> 모델이 정상/결함을 어떻게 맞추고 틀렸는지 4칸 표. 정확도만 보면 안 되고 정밀도·재현율을 같이 봐야 해.</li>
+      <li><b>PHM(Prognostics and Health Management):</b> 기계 상태 감시·고장 예지 분야 통칭. 항공·발전·공장 자동화의 핵심이고, 기계+AI가 만나는 가장 뜨거운 영역.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실천형</h4><ul><li>CWRU 베어링 진동(또는 NASA PHM) 공개 데이터셋 1종 다운로드</li><li>Google Colab에서 정상/결함 분류 CNN 학습</li><li>혼동행렬·정확도 지표로 모델 평가, 1쪽 보고서</li><li>스마트폰 가속도계로 모터 진동 녹음 → 모델에 입력해보는 확장</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>대한기계학회·한국정밀공학회 'PHM' 키워드</li><li>'condition monitoring CNN bearing' 리뷰 논문 2~3편</li><li>한국산업기술시험원(KTL) 예지보전 자료</li><li>단행본: '기계상태 감시와 진단' 일부, '딥러닝의 정석' CNN 단원</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>CWRU 베어링 데이터 다운로드 + 신호 한 장 그리기</b><span class="step-meta">⏱ 30분~1h</span><br>케이스웨스턴리저브대 베어링 데이터 센터 (<code>engineering.case.edu/bearingdatacenter</code>) 접속 → '12k Drive End Bearing Fault Data'에서 정상(Normal) 1개 + 내륜결함(IR) 1개 + 외륜결함(OR) 1개의 .mat 파일 다운로드. Colab에서 <code>scipy.io.loadmat</code>로 읽고 첫 1초(12,000샘플) 시계열 그래프 3장. 결함 신호에서 주기적 충격 패턴이 한눈에.<span class="step-result">✓ 완성품: 정상/IR/OR 진동 시계열 .png 3장 + 코드 .ipynb. CNN 입력 후보 확보.</span></li>
+      <li><b>FFT·스펙트로그램으로 입력 이미지 만들기</b><span class="step-meta">⏱ 1~2h</span><br>Colab에서 <code>scipy.signal.spectrogram</code> 또는 <code>numpy.fft.rfft</code>로 시간 신호 → 주파수 영역 변환. 1초 윈도우를 슬라이딩(50% 겹침)해 100~200장의 64×64 스펙트로그램 .png 생성. 클래스별 폴더 구조: <code>/data/normal/, /data/IR/, /data/OR/</code>. <b>BPFI(내륜 통과 주파수)</b> 위치를 메모 — CNN이 학습할 핵심 패턴.<span class="step-result">✓ 완성품: 클래스 3종 × 100~200장 스펙트로그램 + 폴더 구조 정리.</span></li>
+      <li><b>가벼운 CNN 모델 학습 + 혼동행렬 평가</b><span class="step-meta">⏱ 2~3h</span><br>Colab에서 PyTorch 또는 Keras 사용. 핵심 코드:<br><code>from tensorflow import keras</code><br><code>model = keras.Sequential([Conv2D(16,3,activation='relu',input_shape=(64,64,1)), MaxPool2D(2), Conv2D(32,3,activation='relu'), MaxPool2D(2), Flatten(), Dense(64,'relu'), Dense(3,'softmax')])</code><br><code>model.compile('adam','sparse_categorical_crossentropy',metrics=['accuracy'])</code><br>train/test 8:2 분할 → 10~20 epoch 학습. <code>sklearn.metrics.confusion_matrix</code>로 혼동행렬 출력. 정확도·정밀도·재현율 표 정리. 보통 95% 이상 잘 나와.<span class="step-result">✓ 완성품: 학습 곡선 .png + 혼동행렬 .png + 모델 성능 표.</span></li>
+      <li><b>스마트폰 모터 진동 녹음으로 확장 + 학회지 1편 인용</b><span class="step-meta">⏱ 2~3h</span><br>Phyphox로 가정용 선풍기·믹서기 진동 1초 녹음 → CWRU와 동일 전처리 → 학습된 모델에 입력. 결과 라벨이 무엇이 나왔는지 메모(완전히 다른 도메인이라 분류가 어색해도 OK — 그 자체가 도메인 적응 한계로 보고서 거리). KCI에서 '베어링 결함 CNN' 또는 '진동 기반 PHM' 논문 1편 검색해 인용. 6쪽 보고서: 동기→데이터→방법→결과→한계(도메인 격차)→확장.<span class="step-result">✓ 완성품: 6쪽 보고서 .pdf + KCI 인용 1건 + 본인 모터 진동 시연 결과. 학종 융합 키워드 완결.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· Google Colab + Keras·PyTorch (GPU 무료)<br>· CWRU 베어링 데이터 (<a href="https://engineering.case.edu/bearingdatacenter" target="_blank">case.edu/bearingdatacenter</a>)<br>· Phyphox 앱 (<a href="https://phyphox.org" target="_blank">phyphox.org</a>) — 모터 진동 녹음<br>· KCI (<a href="https://www.kci.go.kr" target="_blank">kci.go.kr</a>) — 기계학회지·기전공학회지</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· Colab 노트북 1개 (.ipynb) + 학습된 모델 .h5<br>· 스펙트로그램 데이터셋 (300~600장)<br>· 혼동행렬 + 학습 곡선 .png 2장<br>· 보고서 6쪽 + 본인 모터 진동 확장 실험</p></div>
+  </div>
+</div>
+</div></section>
+
+<section style="background:linear-gradient(135deg,#09090b,#3f3f46); color:white;"><div class="container">
+  <div style="text-align:center; padding:32px 0;">
+    <div style="font-size:32px; margin-bottom:16px;">⚙</div>
+    <h2 style="font-size:26px; font-weight:800; margin-bottom:14px;">승훈아, 마지막으로.</h2>
+    <div style="max-width:660px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
+      <div style="text-align:left; padding:20px 24px; background:rgba(255,255,255,0.06); border-left:3px solid #d4d4d8; border-radius:0 12px 12px 0;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:#d4d4d8; margin-bottom:8px;">START · 원리에서</div>
+        <em style="color:#d4d4d8; font-style:normal; font-weight:700; font-size:17px; line-height:1.5; display:block;">"Give me a lever long enough and a fulcrum on which to place it, and I shall move the world."</em>
+        <span style="opacity:0.85; font-size:14px; line-height:1.6; display:block; margin-top:8px;">— 충분히 긴 지렛대와 받침점만 있다면 나는 세상을 들어 올리겠다.</span>
+        <span style="opacity:0.55; font-size:12px; display:block; margin-top:6px;">아르키메데스</span>
+      </div>
+      <div style="text-align:left; padding:20px 24px; background:rgba(255,255,255,0.06); border-left:3px solid #a1a1aa; border-radius:0 12px 12px 0;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:#a1a1aa; margin-bottom:8px;">END · 시스템으로</div>
+        <em style="color:#a1a1aa; font-style:normal; font-weight:700; font-size:17px; line-height:1.5; display:block;">"Engineering is the art of directing the great sources of power in nature for the use and convenience of man."</em>
+        <span style="opacity:0.85; font-size:14px; line-height:1.6; display:block; margin-top:8px;">— 공학은 자연의 거대한 힘을 인간의 쓰임에 맞게 방향 잡는 기술이다.</span>
+        <span style="opacity:0.55; font-size:12px; display:block; margin-top:6px;">토머스 트레드골드</span>
+      </div>
+      <p style="font-size:16px; opacity:0.95; line-height:1.8; text-align:center; margin-top:8px;">
+        너의 공학은 <b>"움직임의 원리를 끝까지 이해한다"</b>는 호기심에서 시작해서<br>
+        <b>"그 원리를 시스템으로 제어한다"</b>로 완성될 거야.<br>
+        승훈이는 이미 그 길을 1·2학년 내내 흔들림 없이 걸어왔어. 한 걸음만 더.
+      </p>
+    </div>
+    <p style="margin-top:24px; font-size:13px; opacity:0.6;">담임 정슬기 선생님 · 2026.05.06 · 다음 점검 6월 3일</p>
+  </div>
+</div></section>
+
+</body>
+</html>

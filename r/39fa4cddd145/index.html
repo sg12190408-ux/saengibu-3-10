@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="ko" data-svg-charts="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>전태건 — 나의 생기부 내비게이터</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0284c7;
+    --primary-dark: #075985;
+    --primary-light: #bae6fd;
+    --primary-soft: #f0f9ff;
+    --ink: #1f2937;
+    --ink-soft: #4b5563;
+    --ink-muted: #9ca3af;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --line: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Pretendard', -apple-system, system-ui, '맑은 고딕', sans-serif; color: var(--ink); background: var(--bg); line-height:1.6; font-size:15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width:960px; margin:0 auto; padding:0 24px; }
+  .hero { background: linear-gradient(135deg, #38bdf8 0%, #0369a1 55%, #0c4a6e 100%); color:white; padding:64px 0 88px; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; top:-100px; right:-80px; width:360px; height:360px; border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%); }
+  .hero::after { content:''; position:absolute; bottom:-120px; left:-60px; width:320px; height:320px; border-radius:50%; background: radial-gradient(circle, rgba(2,132,199,0.25), transparent 70%); }
+  .hero .container { position:relative; z-index:2; }
+  .hero-tag { display:inline-block; padding:6px 14px; border-radius:999px; background:rgba(255,255,255,0.18); backdrop-filter: blur(8px); font-size:13px; font-weight:600; margin-bottom:20px; }
+  .hero h1 { font-size:44px; font-weight:800; letter-spacing:-1px; line-height:1.2; margin-bottom:8px; }
+  .hero h1 .name { color:#bae6fd; }
+  .hero-sub { font-size:18px; opacity:0.92; font-weight:500; margin-bottom:28px; }
+  .hero-oneliner { font-size:22px; font-weight:700; line-height:1.5; padding:24px 28px; border-left:4px solid #bae6fd; background:rgba(255,255,255,0.08); border-radius:0 12px 12px 0; backdrop-filter: blur(10px); }
+  .hero-oneliner em { color:#bae6fd; font-style:normal; font-weight:800; }
+  .hero-meta { display:flex; gap:20px; margin-top:24px; flex-wrap:wrap; font-size:14px; opacity:0.85; }
+  .toc { position:sticky; top:0; z-index:50; background:white; border-bottom:1px solid var(--line); padding:12px 0; overflow-x:auto; }
+  .toc-inner { display:flex; gap:4px; max-width:960px; margin:0 auto; padding:0 24px; white-space:nowrap; }
+  .toc a { padding:8px 14px; border-radius:8px; color:var(--ink-soft); text-decoration:none; font-size:13px; font-weight:600; }
+  .toc a:hover { background:var(--primary-soft); color:var(--primary-dark); }
+  section { padding:56px 0; border-bottom:1px solid var(--line); }
+  .sec-num { display:inline-block; font-size:13px; font-weight:800; color:var(--primary); letter-spacing:2px; margin-bottom:8px; }
+  .sec-title { font-size:30px; font-weight:800; letter-spacing:-0.5px; margin-bottom:6px; }
+  .sec-sub { font-size:15px; color:var(--ink-soft); margin-bottom:32px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:720px) { .grid-3 { grid-template-columns:1fr; } }
+  .radar-wrap { display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:center; }
+  @media (max-width:720px) { .radar-wrap { grid-template-columns:1fr; } }
+  .radar-canvas-wrap { background:var(--primary-soft); border-radius:16px; padding:16px; aspect-ratio:1/1; min-height:340px; position:relative; }
+  .radar-canvas-wrap canvas { display:block; width:100% !important; height:100% !important; }
+  .radar-stats { display:flex; flex-direction:column; gap:12px; }
+  .radar-row { display:grid; grid-template-columns:110px 1fr 40px; align-items:center; gap:12px; padding:10px 14px; background:var(--primary-soft); border-radius:10px; }
+  .radar-row .label { font-weight:700; font-size:14px; }
+  .radar-row .bar { display:block; width:100%; height:10px; background:#fff; border:1px solid var(--primary-light); border-radius:999px; overflow:hidden; }
+  .radar-row .fill { display:block; height:100%; background:var(--primary); border-radius:999px; min-width:6px; }
+  .radar-row .num { text-align:right; font-weight:800; font-size:14px; color:var(--primary-dark); }
+  .radar-row.high .fill { background:linear-gradient(90deg, var(--primary), #075985); }
+  .closing { background:linear-gradient(135deg, #bae6fd, var(--primary-soft)); border-radius:20px; padding:32px; text-align:center; margin-top:32px; }
+  .closing-title { font-size:22px; font-weight:800; color:var(--primary-dark); margin-bottom:12px; }
+  .closing-body { font-size:15px; color:var(--ink-soft); line-height:1.7; }
+  .kw-cloud { background:linear-gradient(135deg, var(--primary-soft), white); border-radius:16px; padding:32px; min-height:200px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; }
+  .kw { padding:8px 16px; border-radius:999px; background:white; border:1.5px solid var(--primary-light); font-weight:600; color:var(--primary-dark); }
+  .kw.lg { font-size:28px; padding:12px 24px; background:var(--primary); color:white; border-color:var(--primary); }
+  .kw.md { font-size:20px; padding:10px 20px; background:#38bdf8; color:white; border-color:#38bdf8; }
+  .kw.sm { font-size:14px; }
+  .kw-grade-bar { margin-top:24px; background:white; border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .legend { display:flex; gap:16px; margin-top:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft); }
+  .legend span { display:inline-flex; align-items:center; gap:4px; }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:3px; }
+  .footsteps { display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-bottom:24px; position:relative; }
+  .footsteps::before { content:''; position:absolute; top:50px; left:12%; right:12%; height:2px; background:repeating-linear-gradient(90deg, var(--primary-light) 0 8px, transparent 8px 16px); z-index:0; }
+  .step { text-align:center; position:relative; z-index:1; padding:16px 12px; }
+  .step-icon { width:100px; height:100px; margin:0 auto 12px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:44px; background:white; border:3px solid var(--primary-light); }
+  .step.active .step-icon { border-color:var(--primary); box-shadow:0 0 0 6px rgba(2,132,199,0.18); }
+  .step.weak .step-icon { border-color:#0284c7; border-style:dashed; }
+  .step-pct { font-size:28px; font-weight:800; color:var(--primary-dark); margin-top:4px; }
+  .step.weak .step-pct { color:#0284c7; opacity:0.7; }
+  .step-name { font-weight:700; font-size:15px; margin-top:4px; }
+  .step-desc { font-size:12px; color:var(--ink-muted); margin-top:4px; }
+  .moment { background:white; border:1px solid var(--line); border-radius:16px; padding:24px; transition:transform 0.2s, box-shadow 0.2s; }
+  .moment:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.06); }
+  .moment-badge { display:inline-block; padding:4px 10px; background:var(--primary-soft); color:var(--primary-dark); font-size:11px; font-weight:700; border-radius:6px; margin-bottom:10px; }
+  .moment-pattern { display:inline-block; padding:4px 10px; background:#bae6fd; color:#075985; font-size:11px; font-weight:700; border-radius:6px; margin-bottom:10px; margin-left:6px; }
+  .moment-quote { font-size:14px; line-height:1.7; color:var(--ink-soft); border-left:3px solid var(--primary); padding-left:12px; margin:12px 0; font-style:italic; }
+  .moment-why { font-size:13px; padding:12px; background:var(--primary-soft); border-radius:10px; color:var(--primary-dark); font-weight:500; }
+  .signal-row { display:grid; grid-template-columns:36px 140px 1fr; gap:16px; padding:16px 0; align-items:start; border-bottom:1px solid var(--line); }
+  .signal-row:last-child { border-bottom:none; }
+  .signal-dot { font-size:22px; }
+  .signal-label { font-weight:700; font-size:14px; }
+  .signal-detail { font-size:13px; color:var(--ink-soft); }
+  .signal-detail .h-구체화 { background:#dbeafe; padding:1px 4px; border-radius:3px; }
+  .signal-detail .h-개별화 { background:#d1fae5; padding:1px 4px; border-radius:3px; }
+  .signal-detail .h-총평 { background:#fde68a; padding:1px 4px; border-radius:3px; }
+  .signal-detail .stale { background:#fecaca; padding:1px 4px; border-radius:3px; text-decoration:line-through; text-decoration-color:#ef4444; }
+  .signal-fix { margin-top:10px; padding:10px 12px; background:var(--primary-soft); border-radius:8px; font-size:13px; color:var(--primary-dark); }
+  .pattern-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center; }
+  @media (max-width:720px) { .pattern-grid { grid-template-columns:1fr; } }
+  .pattern-list { display:flex; flex-direction:column; gap:10px; }
+  .pattern-item { display:grid; grid-template-columns:24px 1fr 60px; align-items:center; gap:12px; padding:12px 14px; background:white; border:1px solid var(--line); border-radius:10px; }
+  .pattern-item .pn { width:24px; height:24px; border-radius:50%; background:var(--primary); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .pattern-item.empty .pn { background:var(--ink-muted); }
+  .pattern-item .pname { font-weight:600; font-size:14px; }
+  .pattern-item .pcount { text-align:right; font-weight:800; font-size:16px; color:var(--primary-dark); }
+  .pattern-item.empty { background:#fef3c7; border-color:#fde68a; }
+  .pattern-item.empty .pcount { color:var(--ink-muted); }
+  .action-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:720px) { .action-grid { grid-template-columns:1fr; } }
+  .action-card { background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white; border-radius:16px; padding:24px; position:relative; overflow:hidden; }
+  .action-card::before { content:''; position:absolute; top:-40px; right:-40px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.1); }
+  .action-num { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-weight:800; margin-bottom:14px; position:relative; z-index:1; }
+  .action-title { font-size:17px; font-weight:800; margin-bottom:12px; line-height:1.4; position:relative; z-index:1; }
+  .action-meta { font-size:12px; opacity:0.85; margin-bottom:12px; position:relative; z-index:1; }
+  .action-body { font-size:13px; line-height:1.6; opacity:0.95; position:relative; z-index:1; }
+  .action-deadline { margin-top:14px; padding:6px 10px; background:rgba(186,230,253,0.95); color:#075985; border-radius:6px; font-size:11px; font-weight:700; display:inline-block; position:relative; z-index:1; }
+  .quest { background:white; border:2px solid var(--line); border-radius:16px; padding:24px; margin-bottom:16px; position:relative; }
+  .quest::before { content:''; position:absolute; left:-2px; top:-2px; bottom:-2px; width:6px; background:var(--primary); border-radius:16px 0 0 16px; }
+  .quest-header { display:flex; justify-content:space-between; align-items:start; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+  .quest-title { font-size:18px; font-weight:800; }
+  .quest-tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .qtag { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; }
+  .qtag.diff { background:#bae6fd; color:#075985; }
+  .qtag.dur { background:var(--primary-soft); color:var(--primary-dark); }
+  .qtag.kw { background:#d1fae5; color:#065f46; }
+  .quest-why { font-size:13px; color:var(--ink-soft); margin-bottom:14px; padding:10px 12px; background:var(--bg); border-radius:8px; }
+  .quest-tracks { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:720px) { .quest-tracks { grid-template-columns:1fr; } }
+  .quest-track { border:1px dashed var(--line); border-radius:10px; padding:14px; }
+  .quest-track h4 { font-size:13px; font-weight:800; color:var(--primary-dark); margin-bottom:8px; }
+  .quest-track ul { list-style:none; font-size:13px; color:var(--ink-soft); }
+  .quest-track li { padding:3px 0; padding-left:14px; position:relative; }
+  .quest-track li::before { content:''; position:absolute; left:0; top:12px; width:6px; height:6px; border-radius:50%; background:var(--primary); }
+  .quest-bg { margin-top:14px; padding:14px 16px; background:var(--primary-soft); border-radius:10px; border-left:3px solid var(--primary); }
+  .quest-bg h4 { font-size:12px; font-weight:800; color:var(--primary-dark); margin-bottom:8px; letter-spacing:0.5px; }
+  .quest-bg ul { list-style:none; }
+  .quest-bg li { padding:5px 0 5px 14px; font-size:12.5px; color:var(--ink-soft); position:relative; line-height:1.6; }
+  .quest-bg li::before { content:'•'; position:absolute; left:2px; color:var(--primary-dark); font-weight:800; }
+  .quest-bg li b { color:var(--ink); }
+  .quest-howto { margin-top:12px; padding:14px 16px; background:white; border:1px solid var(--line); border-radius:10px; }
+  .quest-howto h4 { font-size:12px; font-weight:800; color:var(--primary-dark); margin-bottom:10px; letter-spacing:0.5px; }
+  .quest-howto ol { list-style:none; counter-reset:step; }
+  .quest-howto li { padding:6px 0 6px 28px; font-size:12.5px; color:var(--ink-soft); line-height:1.6; counter-increment:step; position:relative; }
+  .quest-howto li::before { content:counter(step); position:absolute; left:0; top:6px; width:20px; height:20px; border-radius:50%; background:var(--primary); color:white; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .quest-howto li b { color:var(--ink); }
+  .quest-howto code { background:var(--primary-soft); padding:1px 6px; border-radius:4px; font-family:'SF Mono', 'Menlo', 'Courier New', monospace; font-size:11.5px; color:var(--primary-dark); border:1px solid var(--primary-light); }
+  .quest-howto .step-meta { display:inline-block; margin-left:4px; padding:1px 7px; background:var(--primary-light); color:var(--primary-dark); border-radius:99px; font-size:10.5px; font-weight:700; vertical-align:middle; }
+  .quest-howto .step-result { display:block; margin-top:4px; font-size:11.5px; color:var(--primary-dark); padding:5px 8px; background:var(--primary-soft); border-radius:6px; border-left:2px solid var(--primary); }
+  .quest-meta { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
+  @media (max-width:720px) { .quest-meta { grid-template-columns:1fr; } }
+  .quest-meta-card { background:white; border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+  .quest-meta-card h5 { font-size:11px; font-weight:800; color:var(--primary-dark); margin-bottom:5px; letter-spacing:0.5px; }
+  .quest-meta-card p { font-size:12px; color:var(--ink-soft); line-height:1.5; }
+  .quest-meta-card a { color:var(--primary-dark); text-decoration:none; border-bottom:1px dotted var(--primary-dark); }
+  @media print { .toc { display:none; } body { background:white; font-size:11pt; } section { page-break-inside:avoid; padding:24pt 0; } .hero { padding:32pt 0; } }
+
+  /* === 모바일 (≤480px) 반응형 패치 === */
+  @media (max-width:480px) {
+    body { font-size:14px; }
+    .container { padding:0 16px; }
+    .hero { padding:44px 0 56px; }
+    .hero h1 { font-size:28px; letter-spacing:-0.5px; line-height:1.25; }
+    .hero-sub { font-size:14px; margin-bottom:20px; }
+    .hero-oneliner { font-size:14.5px; padding:16px 18px; line-height:1.65; border-radius:0 10px 10px 0; }
+    .hero-tag { font-size:11px; margin-bottom:14px; }
+    .hero-meta { font-size:11.5px; gap:8px 14px; margin-top:18px; }
+    .toc { padding:8px 0; }
+    .toc-inner { padding:0 16px; gap:2px; }
+    .toc a { padding:6px 10px; font-size:12px; }
+    section { padding:36px 0; }
+    .sec-num { font-size:11px; letter-spacing:1.5px; }
+    .sec-title { font-size:21px; }
+    .sec-sub { font-size:13.5px; margin-bottom:22px; }
+    .card { padding:16px; border-radius:14px; }
+    /* 레이더 차트 — aspect-ratio 1/1 풀고 고정 높이로 */
+    .radar-wrap { gap:18px; }
+    .radar-canvas-wrap { aspect-ratio:auto; min-height:0; height:300px; padding:10px; }
+    .radar-stats { gap:8px; }
+    .radar-row { grid-template-columns:84px 1fr 36px; padding:8px 10px; gap:8px; }
+    .radar-row .label { font-size:12.5px; }
+    .radar-row .num { font-size:12.5px; }
+    .closing { padding:18px !important; border-radius:14px; }
+    .closing-title { font-size:14px !important; }
+    .closing-body { font-size:13px !important; line-height:1.65; }
+    /* 키워드 클라우드 */
+    .kw-cloud { padding:22px 14px; min-height:auto; gap:8px; }
+    .kw { font-size:12px; padding:6px 12px; }
+    .kw.lg { font-size:18px; padding:8px 14px; }
+    .kw.md { font-size:14px; padding:7px 12px; }
+    .kw.sm { font-size:11.5px; padding:5px 10px; }
+    .kw-grade-bar { padding:14px; }
+    .kw-grade-bar h3 { font-size:13.5px; }
+    /* 머리·가슴·발 — 3열 유지하되 아이콘과 폰트 축소 */
+    .footsteps::before { display:none; }
+    .step { padding:8px 4px; }
+    .step-icon { width:62px; height:62px; font-size:26px; border-width:2px; margin-bottom:8px; }
+    .step.active .step-icon { box-shadow:0 0 0 4px rgba(245,158,11,0.18); }
+    .step-pct { font-size:18px; margin-top:2px; }
+    .step-name { font-size:11.5px; margin-top:2px; }
+    .step-desc { font-size:10px; margin-top:2px; line-height:1.4; }
+    /* 베스트 모먼트 */
+    .moment { padding:18px; }
+    .moment h3 { font-size:15px !important; }
+    .moment-quote { font-size:13px; line-height:1.65; padding-left:10px; }
+    .moment-why { font-size:12.5px; padding:10px; }
+    .moment-badge, .moment-pattern { font-size:10.5px; padding:3px 8px; }
+    /* 시그널 행 — 라벨/디테일을 세로 적층 */
+    .signal-row { grid-template-columns:28px 1fr; gap:8px 10px; padding:14px 0; }
+    .signal-row > div:nth-child(2) { grid-column:2; }
+    .signal-row .signal-detail { grid-column:1 / -1; margin-top:2px; }
+    .signal-dot { font-size:18px; }
+    .signal-label { font-size:13px; }
+    .signal-detail { font-size:12.5px; line-height:1.65; }
+    .signal-fix { font-size:12px; padding:9px 11px; margin-top:8px; }
+    .legend { font-size:11px; gap:10px; }
+    /* 패턴 분포 */
+    .pattern-grid { gap:16px; }
+    .pattern-item { grid-template-columns:22px 1fr 48px; padding:10px 12px; gap:10px; }
+    .pattern-item .pname { font-size:12.5px; }
+    .pattern-item .pcount { font-size:14px; }
+    /* 4주 액션 */
+    .action-card { padding:20px; border-radius:14px; }
+    .action-num { width:28px; height:28px; font-size:13px; }
+    .action-title { font-size:15.5px; margin-bottom:10px; }
+    .action-meta { font-size:11px; }
+    .action-body { font-size:12.5px; line-height:1.65; }
+    .action-deadline { font-size:10.5px; padding:5px 9px; }
+    /* 탐구 퀘스트 */
+    .quest { padding:18px; border-radius:14px; }
+    .quest-header { gap:6px; margin-bottom:10px; }
+    .quest-title { font-size:15.5px; line-height:1.4; }
+    .qtag { font-size:10px; padding:2px 8px; }
+    .quest-why { font-size:12.5px; padding:10px 12px; line-height:1.65; }
+    .quest-bg, .quest-howto { padding:12px 14px; }
+    .quest-bg h4, .quest-howto h4 { font-size:11.5px; }
+    .quest-bg li { font-size:12px; padding:4px 0 4px 12px; }
+    .quest-howto li { font-size:12px; padding:6px 0 6px 26px; line-height:1.65; }
+    .quest-howto li::before { width:18px; height:18px; font-size:10.5px; top:7px; }
+    .quest-howto code { font-size:11px; padding:1px 5px; }
+    .quest-howto .step-meta { font-size:10px; padding:1px 6px; }
+    .quest-howto .step-result { font-size:11px; padding:5px 8px; margin-top:4px; }
+    .quest-track { padding:12px; }
+    .quest-track h4 { font-size:12.5px; }
+    .quest-track li { font-size:12.5px; }
+    .quest-meta { gap:8px; }
+    .quest-meta-card { padding:10px 12px; }
+    .quest-meta-card h5 { font-size:10.5px; }
+    .quest-meta-card p { font-size:11.5px; }
+  }
+
+  /* === 노션 임베드 환경에서 더 자연스럽게 === */
+  html, body { overscroll-behavior:contain; }
+  /* sticky toc가 노션 임베드 안에서 어색할 수 있어 살짝 조정 */
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag">✈️ 나의 생기부 내비게이터 · 2026.05.06</span>
+    <h1>같은 하늘만 보는<br><span class="name">태건</span>이의 항로, 한 장에 담았어.</h1>
+    <p class="hero-sub">3학년 10반 18번 전태건 · 항공조종사(파일럿) 지망</p>
+    <div class="hero-oneliner">
+      태건아, 너의 생기부에서 가장 빛나는 건 <em>'1·2학년 내내 항공조종사 한 길'</em>이라는 흔들림 없는 방향이야.<br>
+      국어·수학·영어·한국사·한문·물리·인공지능까지 거의 모든 과목 세특에 <em>'파일럿·비행기·관제탑·드론·항공역학'</em>이 다 박혀 있어. 이건 학종에서 가장 어려운 '진로 일관성'을 이미 완성한 케이스야.
+    </div>
+    <div class="hero-meta">
+      <span>📅 분석일: 2026.05.06</span>
+      <span>✈️ 진로: 항공조종사 (파일럿)</span>
+      <span>👩‍🏫 담임 정슬기 선생님</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="toc-inner">
+  <a href="#s2">② 6대 역량</a><a href="#s3">③ 키워드 맵</a><a href="#s4">④ 머리·가슴·발</a>
+  <a href="#s5">⑤ 베스트 모먼트</a><a href="#s6">⑥ 시그널</a><a href="#s7">⑦ 패턴</a>
+  <a href="#s8">⑧ 4주 액션</a><a href="#s9">⑨ 탐구 퀘스트</a>
+</div></nav>
+
+<section id="s2"><div class="container">
+  <span class="sec-num">SECTION 02</span>
+  <h2 class="sec-title">너의 학종 능력치, 한 화면에</h2>
+  <p class="sec-sub">2015 개정 교육과정 6대 핵심역량 기준으로, 네 활동에서 추출한 점수야. 채점이 아니라 <b>"지금까지 쌓아둔 자산"</b>의 시각화로 봐줘.</p>
+  <div class="card">
+    <div class="radar-wrap">
+      <div class="radar-canvas-wrap"><svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid meet">
+<path d="M 200.0,127.0 L 221.7,139.5 L 221.7,164.5 L 200.0,177.0 L 178.3,164.5 L 178.3,139.5 Z" fill="none" stroke="#0284c726" stroke-width="1"/>
+<path d="M 200.0,102.0 L 243.3,127.0 L 243.3,177.0 L 200.0,202.0 L 156.7,177.0 L 156.7,127.0 Z" fill="none" stroke="#0284c726" stroke-width="1"/>
+<path d="M 200.0,77.0 L 265.0,114.5 L 265.0,189.5 L 200.0,227.0 L 135.0,189.5 L 135.0,114.5 Z" fill="none" stroke="#0284c726" stroke-width="1"/>
+<path d="M 200.0,52.0 L 286.6,102.0 L 286.6,202.0 L 200.0,252.0 L 113.4,202.0 L 113.4,102.0 Z" fill="none" stroke="#0284c726" stroke-width="1"/>
+<line x1="200" y1="152" x2="200.0" y2="52.0" stroke="#0284c733" stroke-width="1"/>
+<line x1="200" y1="152" x2="286.6" y2="102.0" stroke="#0284c733" stroke-width="1"/>
+<line x1="200" y1="152" x2="286.6" y2="202.0" stroke="#0284c733" stroke-width="1"/>
+<line x1="200" y1="152" x2="200.0" y2="252.0" stroke="#0284c733" stroke-width="1"/>
+<line x1="200" y1="152" x2="113.4" y2="202.0" stroke="#0284c733" stroke-width="1"/>
+<line x1="200" y1="152" x2="113.4" y2="102.0" stroke="#0284c733" stroke-width="1"/>
+<path d="M 200.0,64.0 L 267.5,113.0 L 269.3,192.0 L 200.0,224.0 L 135.9,189.0 L 125.5,109.0 Z" fill="#0284c740" stroke="#0284c7" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="200.0" cy="64.0" r="4" fill="#0284c7" stroke="#fff" stroke-width="2"/>
+<circle cx="267.5" cy="113.0" r="4" fill="#0284c7" stroke="#fff" stroke-width="2"/>
+<circle cx="269.3" cy="192.0" r="4" fill="#0284c7" stroke="#fff" stroke-width="2"/>
+<circle cx="200.0" cy="224.0" r="4" fill="#0284c7" stroke="#fff" stroke-width="2"/>
+<circle cx="135.9" cy="189.0" r="4" fill="#0284c7" stroke="#fff" stroke-width="2"/>
+<circle cx="125.5" cy="109.0" r="4" fill="#0284c7" stroke="#fff" stroke-width="2"/>
+<text x="200.0" y="30.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">자기관리</text>
+<text x="303.9" y="96.0" text-anchor="start" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">지식정보처리</text>
+<text x="303.9" y="216.0" text-anchor="start" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">창의적 사고</text>
+<text x="200.0" y="286.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">심미적 감성</text>
+<text x="96.1" y="216.0" text-anchor="end" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">의사소통</text>
+<text x="96.1" y="96.0" text-anchor="end" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">공동체</text>
+</svg></div>
+      <div class="radar-stats">
+<div class="radar-row high"><span class="label">자기관리</span><span class="bar"><span class="fill" style="width:88%"></span></span><span class="num">88</span></div>
+<div class="radar-row "><span class="label">지식정보처리</span><span class="bar"><span class="fill" style="width:78%"></span></span><span class="num">78</span></div>
+<div class="radar-row "><span class="label">창의적 사고</span><span class="bar"><span class="fill" style="width:80%"></span></span><span class="num">80</span></div>
+<div class="radar-row "><span class="label">심미적 감성</span><span class="bar"><span class="fill" style="width:72%"></span></span><span class="num">72</span></div>
+<div class="radar-row "><span class="label">의사소통</span><span class="bar"><span class="fill" style="width:74%"></span></span><span class="num">74</span></div>
+<div class="radar-row high"><span class="label">공동체</span><span class="bar"><span class="fill" style="width:86%"></span></span><span class="num">86</span></div>
+</div>
+    </div>
+    <div class="closing" style="margin-top:24px;background:var(--primary-soft);padding:18px 22px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;margin-bottom:4px;">🎯 코치 한마디</div>
+      <div class="closing-body" style="font-size:14px;">태건아, <b>자기관리(88)</b>가 가장 높아 — 1학년 바른생활 부장·분리수거 도우미·아침 자발 청소까지 '시키지 않은 일도 마다하지 않는다'는 행특 표현이 그냥 나온 게 아니야. 출결도 2년 내내 지각 1회씩이고. <b>공동체(86)</b>도 강점인데, 봉사 누적 54시간(1학년 30+2학년 24)에 학교 행사·심화과학반 캠프 방송 운영까지 진짜 꾸준해. <b>지식정보처리(78)</b>는 주요 교과 등급으로만 보면 낮아 보일 수 있지만, 진로선택과목 <b>과학과제연구·인공지능 기초·기하 모두 A~B</b>라는 점이 진짜 너의 결을 보여줘. 평가자가 보는 건 '이 학생이 본인 진로 방향에서 깊이 있게 갔는가'야.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s3" style="background:var(--primary-soft);"><div class="container">
+  <span class="sec-num">SECTION 03</span>
+  <h2 class="sec-title">너만의 키워드 3개</h2>
+  <p class="sec-sub">학종 평가의 한 가지 분명한 원칙: <b>"한 키워드로 1→2→3학년이 이어지면 학종에서 최고점"</b>.</p>
+  <div class="kw-cloud"><span class="kw lg">항공조종·비행 원리</span><span class="kw lg">항공역학·드론 제어</span><span class="kw md">기상·항법 안전</span><span class="kw md">항공 영어·관제 소통</span><span class="kw">유체역학·양력</span><span class="kw">생체모방 항공</span><span class="kw sm">운동량 보존</span><span class="kw sm">연료효율 함수</span><span class="kw sm">스마트 공항</span></div>
+  <div class="kw-grade-bar">
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:14px;">키워드 수직 연계 — 학년별 깊이</h3>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+<line x1="36" y1="164.0" x2="584" y2="164.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="168.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">0</text>
+<line x1="36" y1="134.0" x2="584" y2="134.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="138.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">3</text>
+<line x1="36" y1="104.0" x2="584" y2="104.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="108.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">6</text>
+<line x1="36" y1="74.0" x2="584" y2="74.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="78.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">9</text>
+<line x1="36" y1="44.0" x2="584" y2="44.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="48.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">12</text>
+<rect x="81.7" y="114.0" width="91.3" height="50.0" fill="#38bdf8" rx="3"/>
+<rect x="81.7" y="84.0" width="91.3" height="30.0" fill="#0284c7" rx="3"/>
+<rect x="81.7" y="74.0" width="91.3" height="10.0" fill="#075985" rx="3"/>
+<text x="127.3" y="68.0" text-anchor="middle" font-size="13" font-weight="800" fill="#4b5563" font-family="Pretendard, sans-serif">9</text>
+<text x="127.3" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">1학년</text>
+<rect x="264.3" y="104.0" width="91.3" height="60.0" fill="#38bdf8" rx="3"/>
+<rect x="264.3" y="54.0" width="91.3" height="50.0" fill="#0284c7" rx="3"/>
+<rect x="264.3" y="24.0" width="91.3" height="30.0" fill="#075985" rx="3"/>
+<text x="310.0" y="18.0" text-anchor="middle" font-size="13" font-weight="800" fill="#4b5563" font-family="Pretendard, sans-serif">14</text>
+<text x="310.0" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">2학년</text>
+<text x="492.7" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">3학년</text>
+</svg>
+    <div class="legend"><span><i style="background:#38bdf8"></i>항공조종·비행 원리</span><span><i style="background:#0284c7"></i>항공역학·드론 제어</span><span><i style="background:#075985"></i>기상·항법 안전</span></div>
+    <div class="closing" style="background:white;margin-top:18px;padding:14px 18px;text-align:left;border:1px dashed var(--primary);">
+      <div class="closing-body" style="font-size:13px;">✨ <b>잘하고 있는 점:</b> 1학년 진로희망부터 항공조종사 한 단어로 시작해 2학년까지 그대로 유지된 흔치 않은 케이스야. 1학년 모형비행기·아두이노 자동차에서 시작해 2학년 자율주행·드론·부엉이 깃털 생체모방까지 이어졌고, 영어 발표(파일럿 동기)·국어 독후활동(『하늘을 날고 싶다면 파일럿』)·한국사(독립운동 조종사)·한문(휘천=하늘을 밝힌다)까지 거의 모든 과목 세특에 항공이 박혀 있어. 진로 일관성으로 보면 학종에서 가장 강한 패턴이야. 🌱 <b>다음 한 걸음:</b> 2학년 독서 세특에서 '윌슨 구름상자→항공기 안전 시스템'이라는 깊이 있는 연결이 한 번 나왔어. 3학년에 같은 깊이의 '본인이 한 단계 더 들어간' 탐구 1건만 더 박으면 1·2·3학년이 한 항로로 이어진다.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s4"><div class="container">
+  <span class="sec-num">SECTION 04</span>
+  <h2 class="sec-title">머리 → 가슴 → 발</h2>
+  <p class="sec-sub">공부의 세 단계 지도. <b>머리(이론) → 가슴(탐구) → 발(실천·산출물)</b>까지 갔을 때 세특이 진짜 살아나.</p>
+  <div class="card">
+    <div class="footsteps">
+      <div class="step active"><div class="step-icon">🧠</div><div class="step-pct">30%</div><div class="step-name">머리 · 이론</div><div class="step-desc">수업·발표·이론 학습</div></div>
+      <div class="step active"><div class="step-icon">❤️</div><div class="step-pct">40%</div><div class="step-name">가슴 · 탐구</div><div class="step-desc">호기심에서 출발한 심화</div></div>
+      <div class="step active"><div class="step-icon">🦶</div><div class="step-pct">30%</div><div class="step-name">발 · 실천</div><div class="step-desc">제작·실험·산출물</div></div>
+    </div>
+    <div class="closing" style="background:#bae6fd;padding:18px 22px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;color:var(--primary-dark);margin-bottom:4px;">🚶 한 발 더</div>
+      <div class="closing-body" style="font-size:14px;color:#075985;">태건아, 너는 <b>'발'이 흔하지 않게 살아 있는 학생</b>이야. 아두이노 자동차 직접 제작, 모형비행기 조립·비행, 자율주행 차량·드론 직접 제작, 부엉이 깃털 모방 드론 날개 3D 출력까지 — 이건 같은 진로 지원자 중에서도 손에 직접 만들어본 경험이 누적된 드문 케이스야. 한 가지만 더 — <b>제작한 결과물의 '실험 데이터·그래프·결과 해석'을 한 장으로 정리해 공유하는 단계</b>까지 끌고 가자. 과학과제연구의 윙렛 드론 비행 효율 측정이 그 시작이었어. 그 흐름을 3학년에 한 번 더 만들면 '발'이 70%까지 자연스럽게 올라가.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s5" style="background:var(--bg);"><div class="container">
+  <span class="sec-num">SECTION 05</span>
+  <h2 class="sec-title">너의 베스트 모먼트 3</h2>
+  <p class="sec-sub">생기부에서 가장 잘 쓰인 문장 3개. <b>왜 좋은지</b>를 우수 세특 패턴 분류로 풀어줄게.</p>
+  <div class="grid-3">
+<div class="moment">
+  <span class="moment-badge">🟢 과학과제 연구 · 2학년</span>
+  <span class="moment-pattern">패턴 ① 동기·과정·결과·확장형</span>
+  <h3 style="font-size:16px;font-weight:800;">부엉이 깃털 생체모방 드론 — 양력·추력 정량 측정</h3>
+  <p class="moment-quote">"드론 소음 문제를 해결하기 위해 부엉이 깃털 구조 선행연구를 기반으로 갈라진 형태·윙렛 구조 드론 날개를 3D 출력함. 비행 거리·비행 시간·투입 에너지로 비행 효율성을 정량화. 윙렛 도입 후 양력·추력이 오히려 감소한 결과를 와류 억제력 감소, 속도 조절기 작동 등 원인으로 해석하고 추가 실험을 새로 설계함."</p>
+  <div class="moment-why">✨ 가설→3D 출력→정량 측정→예상과 다른 결과 해석→재설계로 이어진 한 사이클이 너무 깔끔해. 항공 전공 평가자가 가장 좋아하는 '실패 후 분석' 사례.</div>
+</div>
+<div class="moment">
+  <span class="moment-badge">🟢 독서 · 2학년</span>
+  <span class="moment-pattern">패턴 ② 키워드 연계형 + ⑥ 머리·가슴·발 통합</span>
+  <h3 style="font-size:16px;font-weight:800;">윌슨 구름상자 → 항공기 안전 시스템 입자 검출</h3>
+  <p class="moment-quote">"윌슨 구름상자 글을 읽고 '구름·안개 현상 이해는 기상을 정확히 파악해야 하는 항공조종사에게 필수'라는 점에 주목. '윌슨의 구름 상자에서 현대 항공 안전 시스템까지의 입자 검출 기술 발전'을 주제로 잡아, 응결-끓음 비교, 항공 전자장비 방사선 내성 평가, 기체·부품 비파괴 검사로의 응용까지 확장함."</p>
+  <div class="moment-why">✨ 단순 독후감이 아니라 '왜 항공조종사에게 이 글이 필요한가'로 진로와 직결시킨 사례. 한 권의 책을 자기 진로 어휘로 재정렬하는 능력이 보여.</div>
+</div>
+<div class="moment">
+  <span class="moment-badge">🟢 동아리 M.O.E.2 · 2학년</span>
+  <span class="moment-pattern">패턴 ① + ⑥ 머리·가슴·발 통합</span>
+  <h3 style="font-size:16px;font-weight:800;">자율주행차·드론 직접 제작 → 항공우주공학으로 확장</h3>
+  <p class="moment-quote">"아두이노 자율주행 자동차 제작에서 초음파·적외선 센서 임계값 조정으로 주행 안정성을 개선하고, 드론 제작에서는 자이로·가속도 센서 자세 안정화 원리를 학습함. 자율주행 차량과 드론 제어 구조를 비교 분석하며 이동체 제어의 공통 원리를 탐구하고, 드론 작동을 통해 유체역학 기반의 날개 제작까지 항공우주공학적 역량을 확장함."</p>
+  <div class="moment-why">✨ '직접 제작'에 '센서 디버깅'에 '비교 분석'까지 한 줄에 다 담겼어. 항공 진로의 핵심인 '제어 시스템 이해'를 행동으로 보여준 케이스.</div>
+</div></div>
+</div></section>
+
+<section id="s6"><div class="container">
+  <span class="sec-num">SECTION 06</span>
+  <h2 class="sec-title">시그널 점검 — 3색 형광펜</h2>
+  <p class="sec-sub">모든 세특을 <b>구체화 → 개별화 → 성장 총평</b> 3축으로 분해했어. 빈 칸이 어디인지 한눈에.</p>
+  <div class="card">
+    <div class="legend" style="margin-bottom:16px;">
+      <span><i style="background:#dbeafe"></i> 구체화</span>
+      <span><i style="background:#d1fae5"></i> 개별화</span>
+      <span><i style="background:#fde68a"></i> 성장 총평</span>
+      <span><i style="background:#fecaca"></i> 상투 표현</span>
+    </div>
+
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">수학Ⅰ · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">양호 · 진로 직결 정량 탐구</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>항공기 연료 소비를 지수함수로 모델링하고, 일정 연료량 이하로 떨어지는 시점을 로그함수로 역산함.</span> <span class='h-개별화'>"공비 0.9의 등비수열로도 표현 가능하지만 연속적 변화는 지수함수가 더 적절"이라고 본인이 직접 비교 판단함.</span> <span class='h-총평'>진로 직무에 수학이 어떻게 쓰이는지 본인 사례로 정확히 끼워 넣은 모범 세특.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">물리학Ⅰ · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">양호 · 항공 도킹 시나리오</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>운동량 보존을 항공기 도킹 상황으로 가정해 수행평가 문항을 직접 출제함.</span> <span class='h-개별화'>충돌 시 두 물체가 같은 시간 동안 같은 크기의 힘을 주고받는다는 점에 주목해 운동량 합 보존을 단계적으로 정리하고, 힘-시간 그래프로 단순 계산이 아닌 개념 이해를 묻고자 한 의도가 분명히 드러남.</span> <span class='h-총평'>물리 원점수가 5등급대지만, 본인의 호기심이 진로와 만나는 지점은 정확히 짚었어.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">영어Ⅱ · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">양호 · 항공 영어 직무 인식</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>'스마트 공항 자동화'를 주제로 서론·본론·결론 갖춘 영어 본문을 직접 기획·작성함.</span> <span class='h-개별화'>베트남 다낭 공항 자동화, 유럽 친환경 연료 항공사, 한국·일본 스마트 공항 사례를 모아 '세계화 시대 공항 변화의 중요성'으로 결론을 묶음.</span> <span class='h-총평'>1학년 영어Ⅰ '파일럿 동기 발표'에서 '관제탑 영어 소통이 필수' 인식이 이미 있었고, 그게 2학년에서 글로 발전한 흐름이 보여.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟡</span>
+  <div>
+    <div class="signal-label">생명과학Ⅰ · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">진로 연결 한 줄만 더하면</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>1년 내내 모든 판서 내용을 빠짐없이 정리한 성실한 태도가 기록됨.</span> <span class='h-개별화'>줄무늬 나방 사례로 종 서식지 이동·생물다양성 변화를 분석하며 기후-생태 연결을 체계적으로 제시.</span> 그러나 마지막이 <span class='stale'>새로운 시각으로 현상을 해석하려는 의지가 뚜렷하게 나타남</span>으로 끝나서 <b>'이게 항공조종사 진로와 어떻게 연결되는지'</b>가 비어 있어.<div class="signal-fix">💡 <b>3학년에 같은 흐름이 있다면</b> "기후변화로 항공 노선 운항 조건이 바뀌는 사례에 주목하게 됐다" 같은 한 줄을 본인이 직접 적어달라고 부탁하자. 3학년 자료가 비어 있으니 가장 쉽게 보강할 수 있는 자리.</div></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🔴</span>
+  <div>
+    <div class="signal-label">2학년 일부 교과 등급</div>
+    <div style="font-size:11px;color:var(--ink-muted);">정량 성취도 약점</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>국어·수학·영어·과학 4영역에서 2학년 전반적으로 4~7등급, 영어Ⅱ는 32점·6등급으로 가장 약함.</span> 행특에 <span class='stale'>발표나 모둠 활동에서 자신을 드러내는 데는 소극적</span>이라는 표현도 있어 자기소개서·면접에서 그대로 노출되면 부담이 될 수 있어.<div class="signal-fix">💡 <b>걱정 마, 항공조종사 진로는 일반 학과와 평가 기준이 달라.</b> 항공운항과·국립항공대학 등은 ① 신체조건(시력·체력·청력) ② 영어 회화 능력 ③ 물리·기상 기초 ④ 면접에서의 직무 이해도가 핵심이야. 영어 등급이 약한 건 사실이지만, 영어Ⅰ·Ⅱ 세특에서 '관제탑 영어·항공 매뉴얼 영어'를 본인이 명시했다는 점이 면접에서 강력한 자기인식 근거가 돼. 약점을 자산화하는 표현을 미리 준비하자: "영어 등급은 부족하지만, 그래서 ICAO 항공영어 4급(Operational) 취득을 단기 목표로 삼고 있다."</div></div>
+</div>
+  </div>
+</div></section>
+
+<section id="s7" style="background:var(--bg);"><div class="container">
+  <span class="sec-num">SECTION 07</span>
+  <h2 class="sec-title">너의 세특 패턴 분포</h2>
+  <p class="sec-sub">우수 세특 사례를 분석해 도출한 6가지 패턴.</p>
+  <div class="card">
+    <div class="pattern-grid">
+      <div><svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;max-width:280px;margin:0 auto;">
+<path d="M 140.00 44.00 A 96 96 0 0 1 234.54 156.67 L 197.12 150.07 A 58 58 0 0 0 140.00 82.00 Z" fill="#38bdf8" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 234.54 156.67 A 96 96 0 0 1 78.29 213.54 L 102.72 184.43 A 58 58 0 0 0 197.12 150.07 Z" fill="#0284c7" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 78.29 213.54 A 96 96 0 0 1 45.46 123.33 L 82.88 129.93 A 58 58 0 0 0 102.72 184.43 Z" fill="#075985" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 45.46 123.33 A 96 96 0 0 1 56.86 92.00 L 89.77 111.00 A 58 58 0 0 0 82.88 129.93 Z" fill="#e5e7eb" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 56.86 92.00 A 96 96 0 0 1 140.00 44.00 L 140.00 82.00 A 58 58 0 0 0 89.77 111.00 Z" fill="#0c4a6e" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<text x="140" y="136" text-anchor="middle" font-size="11" font-weight="600" fill="#9ca3af" font-family="Pretendard, sans-serif">총 세특 패턴</text>
+<text x="140" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="#1f2937" font-family="Pretendard, sans-serif">18건</text>
+</svg></div>
+      <div class="pattern-list"><div class="pattern-item"><span class="pn">1</span><span class="pname">동기·과정·결과·확장</span><span class="pcount">5건</span></div><div class="pattern-item"><span class="pn">2</span><span class="pname">키워드 연계형</span><span class="pcount">6건</span></div><div class="pattern-item"><span class="pn">3</span><span class="pname">호기심·탐구형</span><span class="pcount">3건</span></div><div class="pattern-item empty"><span class="pn">4</span><span class="pname">질문 인용형</span><span class="pcount">0건</span></div><div class="pattern-item empty"><span class="pn">5</span><span class="pname">반성적 실마리형</span><span class="pcount">1건</span></div><div class="pattern-item"><span class="pn">6</span><span class="pname">머리·가슴·발 통합</span><span class="pcount">3건</span></div></div>
+    </div>
+    <div class="closing" style="background:#bae6fd;padding:18px 22px;margin-top:20px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;color:var(--primary-dark);margin-bottom:6px;">🎯 가장 시급한 패턴: ④ 질문 인용형 + ⑤ 반성적 실마리형</div>
+      <div class="closing-body" style="font-size:14px;color:#075985;">태건아, 6패턴 중 ②(키워드 연계)는 학년 최상위 수준이야 — 거의 모든 과목에 '항공'이 박혀 있어. 다만 ④ '질문 인용형'은 0건이야. 평가자 시선이 가장 빨리 잡히는 게 따옴표로 묶은 의문문이거든. 3학년 진로활동·과제 발표에서 한 번만 <b>"비행 중 갑작스러운 측풍이 왔을 때 조종사는 어떤 정보부터 확인할까?"</b>처럼 활동 도입에 의문문 한 문장을 넣어달라고 요청하자. 30초면 추가되고, 호기심을 보여주는 가장 강한 무기가 돼.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s8"><div class="container">
+  <span class="sec-num">SECTION 08</span>
+  <h2 class="sec-title">다음 4주 액션 카드</h2>
+  <p class="sec-sub">진단으로 끝내지 않을게. 6월 3일까지 네가 할 수 있는 <b>구체적인 행동 3가지</b>.</p>
+  <div class="action-grid">
+<div class="action-card">
+  <div class="action-num">1</div>
+  <div class="action-meta">항공 직무 차별화</div>
+  <h3 class="action-title">항공기상·악기상 대처 1쪽 정리</h3>
+  <p class="action-body">2학년 독서의 '윌슨 구름상자→항공 안전' 흐름을 한 단계 더 끌고 가보자. 측풍·난류·뇌우·결빙 4가지 악기상별로 '조종사가 받는 신호 → 의사결정 절차 → 항공 영어 표준 표현'을 1쪽 인포그래픽으로 정리. 면접에서 '항공기상에 대해 어디까지 알고 있나?' 질문에 그대로 답이 돼.</p>
+  <span class="action-deadline">📅 ~ 5월 16일</span>
+</div>
+<div class="action-card">
+  <div class="action-num">2</div>
+  <div class="action-meta">세특 보강 · 질문 인용형</div>
+  <h3 class="action-title">활동 도입에 의문문 한 줄 박기</h3>
+  <p class="action-body">3학년 활동에서 도입을 따옴표로: <b>"비행 중 측풍을 만났을 때 조종사는 어떤 정보부터 확인할까?"</b> 같은 식. 담임샘·교과샘께 '이 의문문을 활동 동기로 기록해주세요'라고 부탁해두자. 패턴 ④ 한 번에 채워져.</p>
+  <span class="action-deadline">📅 ~ 5월 24일</span>
+</div>
+<div class="action-card">
+  <div class="action-num">3</div>
+  <div class="action-meta">신체·영어 실전 준비</div>
+  <h3 class="action-title">조종사 자격 요건 점검표 + ICAO 영어 학습 시작</h3>
+  <p class="action-body">조종사 진로는 학과 점수만큼 신체조건·영어가 결정적이야. ① 시력(나안 0.5 이상)·청력 자가점검 결과를 메모하고, ② 항공영어 ICAO Level 4 학습 자료 1권을 시작해 진로활동에 한 줄 기록되도록 부탁하자. 자기소개서에 "약점을 알고 그 자리에 무엇을 채우고 있는지"가 가장 강한 답이야.</p>
+  <span class="action-deadline">📅 ~ 6월 3일</span>
+</div></div>
+</div></section>
+
+<section id="s9" style="background:var(--primary-soft);"><div class="container">
+  <span class="sec-num">SECTION 09</span>
+  <h2 class="sec-title">이번 학기 탐구 퀘스트 3</h2>
+  <p class="sec-sub">너의 키워드를 한 단계 더 깊게 가져갈 탐구 3종.</p>
+
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">✈️ 1. 측풍 착륙(Crosswind Landing) 시 조종사 의사결정 시뮬레이션</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★☆</span>
+      <span class="qtag dur">3주</span>
+      <span class="qtag kw">키워드 연결: 항공역학·기상·항법</span>
+    </div>
+  </div>
+  <div class="quest-why">💙 <b>왜 태건이에게?</b> 1학년 모형비행기 비행 노선 계획, 2학년 물리Ⅰ 운동량 보존(항공기 도킹), 수학Ⅰ 연료 소비 모델링 — 단발 활동 셋이 측풍 착륙 한 시나리오로 합쳐지면 '항공역학 + 항법'을 1·2·3학년 한 줄로 잇는 가장 강력한 카드가 돼. 면접 핵심 답변에도 직결.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>양력과 베르누이 원리(Lift, Bernoulli):</b> 날개 위·아래 압력차로 비행기를 띄우는 가장 기본 원리. 받음각(α)이 커지면 양력 ↑, 그러나 임계각을 넘으면 실속(stall) — 측풍 보정 시 가장 먼저 흔들리는 변수.</li>
+      <li><b>접근 진입속도 V_REF:</b> 착륙 직전 활주로 진입 시점의 기준 속도. 보통 실속 속도의 1.3배(<code>V_REF = 1.3 × V_S0</code>). 측풍이 강할수록 약간 더 가산하는 게 표준.</li>
+      <li><b>METAR/TAF 항공기상 코드(ICAO):</b> 공항 기상 실황(METAR)과 예보(TAF)를 5자리 단위로 압축한 표준 양식. <b>풍향·풍속·시정·운고</b>를 30초 안에 읽는 게 조종사의 출발선.</li>
+      <li><b>Crab vs Sideslip 두 기법:</b> 크랩은 기수를 풍상 방향으로 틀어 진입 후 접지 직전 일치, 사이드슬립은 기체 자체를 기울여 옆으로 흘리는 방식. 측풍 강도·기체 특성에 따라 선택이 갈려.</li>
+      <li><b>방향 안정성(Dihedral · Weathercock):</b> 날개 상반각과 수직꼬리날개가 만드는 자연 복원력. 측풍 직후 기체가 어떻게 스스로 흔들리는지 결정 — 보정량 계산의 출발점.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실험형 / 실천형</h4><ul><li>측풍 풍속(5·10·15·20kt)별 항공기 받음각·드리프트 각도 기하학적 계산</li><li>마이크로소프트 플라이트 시뮬레이터(또는 X-Plane) 무료판으로 동일 활주로·동일 항공기에서 측풍 변수만 바꿔 착륙 시도 5회씩 기록</li><li>풍속별 평균 접지점 오차 그래프 작성, 'Crab vs Sideslip' 두 기법 비교</li><li>'조종사 의사결정 흐름도' 1쪽 인포그래픽 산출 → 진로활동 자료로</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>RISS·DBpia '항공기 측풍 착륙', 'crosswind landing technique'</li><li>국토교통부 항공기상청 운항 매뉴얼·기상 가이드</li><li>FAA Airplane Flying Handbook 8장 'Approaches and Landings'(영문, 항공영어 학습 겸용)</li><li>단행본: '비행 원리(Aerodynamics for Naval Aviators)' 양력·항력 챕터 발췌</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>METAR 기상 코드 1개 해독해서 측풍 성분 계산</b><span class="step-meta">⏱ 30~60분</span><br>항공기상청(<code>amo.kma.go.kr</code>) 또는 <code>aviationweather.gov</code>에서 김포(RKSS)·인천(RKSI) METAR 1건 가져오기. 예: <code>RKSS 121200Z 27015KT 9999 FEW030 ...</code> → 풍향 270°·풍속 15kt 의미. 활주로 14/32 기준으로 측풍 성분 = <code>V × sin(θ)</code> 공식 적용해 손계산. 3개 공항 × 3개 시각 = 9건 표로 정리.<span class="step-result">✓ 완성품: A4 반쪽 METAR 해독 표 1장. 측풍 보정량의 출발점이 됨.</span></li>
+      <li><b>X-Plane(또는 MS Flight Sim)에서 측풍 변수 통제 실험</b><span class="step-meta">⏱ 1~2h</span><br>X-Plane 11 무료 데모 또는 MS Flight Simulator 설치 → 동일 공항(KSFO 28R 추천)·동일 기체(Cessna 172) 고정 → 측풍만 5·10·15·20kt 4단계로 바꿔 각 5회 착륙. 매 시도마다 <code>접지점 오차(m) / 접지 속도(kt) / 보정 기법(crab·sideslip)</code> 기록. 영상 녹화는 OBS Studio(<code>obsproject.com</code>) 무료 사용.<span class="step-result">✓ 완성품: 측풍 4단계 × 5회 = 20회 착륙 로그 표 + 영상 클립 4개.</span></li>
+      <li><b>Excel·Python으로 V_REF 보정 곡선 그리기</b><span class="step-meta">⏱ 1~2h</span><br>Excel에 <code>풍속 / 측풍 성분 / 접지점 오차 / 사용 기법</code> 4열 입력 → 산점도 + 추세선. 도전과제로 Google Colab에서:<br><code>import numpy as np, matplotlib.pyplot as plt</code><br><code>V_S0 = 47  # Cessna 172 실속속도(kt)</code><br><code>V_REF = 1.3 * V_S0 + 0.5 * crosswind  # 측풍 가산</code><br>풍속별 권장 V_REF 그래프와 실제 시뮬레이터 데이터를 겹쳐 그리면 "이론 vs 실측 갭"이 한눈에.<span class="step-result">✓ 완성품: 풍속-오차 산점도 .png 1장 + V_REF 보정 곡선 .png 1장.</span></li>
+      <li><b>조종사 의사결정 흐름도 인포그래픽 + CRM 한 줄</b><span class="step-meta">⏱ 2~3h</span><br>Canva(<code>canva.com</code>) 또는 미리캔버스(<code>miricanvas.com</code>)에서 A4 1매. 구조: <code>METAR 확인</code> → <code>측풍 성분 계산</code> → <code>기법 선택(Crab/Sideslip)</code> → <code>V_REF 보정</code> → <code>Go-around 판단 기준</code>. 마지막에 <b>CRM(Crew Resource Management) 인지부하</b> 한 줄 — "왜 단독 판단보다 부기장과의 분담이 안전한가" 본인 답. 물리 또는 지구과학 교과샘께 5분 검토.<span class="step-result">✓ 완성품: A4 인포그래픽 1매. 진로활동 발표·자기소개서 직결.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· X-Plane 11 (<a href="https://www.x-plane.com" target="_blank">x-plane.com</a>) 또는 MS Flight Simulator<br>· 항공기상청 (<a href="https://amo.kma.go.kr" target="_blank">amo.kma.go.kr</a>) — METAR/TAF<br>· FAA Airplane Flying Handbook 8장 (PDF 무료)<br>· Canva (<a href="https://www.canva.com" target="_blank">canva.com</a>) — 인포그래픽</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· 측풍 시뮬레이션 로그 표 1장 (20회)<br>· V_REF 보정 그래프 .png 2장<br>· 조종사 의사결정 흐름도 A4 1매<br>· 분석 보고서 5쪽 내외</p></div>
+  </div>
+</div>
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">🦉 2. 부엉이 깃털 모방 드론 — 와류·소음 정량 후속 연구</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★☆</span>
+      <span class="qtag dur">3~4주</span>
+      <span class="qtag kw">키워드 연결: 유체역학·생체모방·항공우주</span>
+    </div>
+  </div>
+  <div class="quest-why">💙 <b>왜 태건이에게?</b> 2학년 과학과제연구에서 윙렛 도입 시 양력·추력이 오히려 감소한 결과를 본인이 '와류 억제력 감소'로 해석했지. 그 가설을 직접 측정·증명하는 후속편이야. 같은 주제를 한 단계 더 깊게 가는 흐름이라 키워드 수직 연계 패턴 ②를 1→3학년까지 잇게 돼.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>윙팁 보텍스(Wingtip Vortex):</b> 날개 끝에서 위·아래 압력차로 생기는 회오리. <b>유도 항력</b>의 주범이고 후행기에 위험한 후류 난기류를 만들어. 모든 윙렛·갈라진 깃 설계의 출발점.</li>
+      <li><b>레이놀즈수(Re):</b> 관성력/점성력 비. 모형 드론은 Re ≈ 10⁵, 실제 항공기는 Re ≈ 10⁷. <b>같은 형상이라도 Re가 다르면 결과가 다르다</b> — 모형 실험 해석의 핵심 단서.</li>
+      <li><b>부엉이 깃털 톱니 가장자리(Serrated Edge):</b> 부엉이 앞전 깃털의 빗살 구조가 와류를 잘게 쪼개 광대역 소음(특히 2–8kHz)을 흡수. NASA가 풍력 블레이드·드론에 응용 중.</li>
+      <li><b>유도 항력 vs 점성 항력:</b> 양력 만들 때 동반되는 손실(유도) vs 표면 마찰(점성). 윙렛은 유도 항력을 줄이는 게 목적인데, 점성 항력이 더 늘면 총 항력이 오히려 증가 — 본인이 본 결과의 진짜 원인.</li>
+      <li><b>음압레벨(SPL, dB):</b> 소음 정량화의 표준 단위. <code>SPL = 20·log₁₀(P/P₀)</code>로 로그 스케일이라 3dB 차이가 음압 1.4배. 거리 두 배마다 6dB 감소(역제곱) 보정 필수.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실험형 / 실천형</h4><ul><li>3D 출력 날개 형태 4종(평면·윙렛·갈라진 깃·복합) × 회전 속도 3단계 = 12조건</li><li>스마트폰 데시벨 앱(또는 SPL meter)으로 동일 거리 소음 측정 + 슬로모션 영상으로 와류 가시화</li><li>날개 끝 형상 정량값(분기 간격·각도)과 소음·추력의 상관 분석</li><li>결과를 1쪽 보고서 + 3분 발표 영상으로 산출</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>한국항공우주학회지·한국유체기계학회지 '날개 끝 와류·윙팁 보텍스'</li><li>NASA Technical Reports Server 'wingtip vortex serrated edge owl'</li><li>한국과학창의재단 '생체모방' 고등학생 보고서 사례</li><li>단행본: '비행기는 어떻게 나는가(David Anderson)' 양력 챕터</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>날개 끝 형상 4종 STL 모델링 + 3D 출력</b><span class="step-meta">⏱ 2~3h</span><br>Tinkercad(<code>tinkercad.com</code>, 무료) 또는 Fusion 360(학생 라이선스)에서 동일 시위 80mm·길이 200mm 날개 4종 설계: <b>① 평면(대조군) ② 일반 윙렛(45°) ③ 부엉이 톱니(분기 5개·간격 4mm) ④ 복합(윙렛+톱니)</b>. 학교 메이커스페이스 또는 무한상상실에서 PLA로 출력. 모든 변수 동일하게 — <b>두께·시위·재료</b> 통제가 결과 신뢰도의 핵심.<span class="step-result">✓ 완성품: 날개 4종 .stl 파일 + 실물 4개. 출력 사진 1장.</span></li>
+      <li><b>회전 속도 3단계 × 4형상 = 12조건 측정 프로토콜</b><span class="step-meta">⏱ 2~3h</span><br>저렴한 BLDC 모터 + ESC + 아두이노 PWM(또는 RC 송신기) 회전수 제어. 회전 속도 3단계는 <b>3000·5000·7000 RPM</b> 권장(회전수계 또는 스마트폰 스트로보 앱으로 검증). 동일 거리 1m에서 스마트폰 SPL 앱(<code>NIOSH Sound Level Meter</code>, iOS 무료)으로 측정. 측정마다 3회 평균. 추력은 디지털 저울 위에 고정해 그램(g) 단위 측정.<span class="step-recall step-result">✓ 완성품: 12조건 측정 데이터 표 1장 (소음 dB / 추력 g / 회전수 RPM).</span></li>
+      <li><b>슬로모션 와류 가시화 + 데이터 분석</b><span class="step-meta">⏱ 2~3h</span><br>스마트폰 240fps 슬로모션 + 베이비파우더(또는 향 연기)로 와류 가시화 — 갈라진 깃 형상에서 와류가 작게 쪼개지는지 영상으로 확인. 분석은 Excel에서:<br><code>=CORREL(분기간격_열, 소음dB_열)</code><br>분기 간격·각도 ↔ 소음·추력의 상관계수 산출. 막대그래프 4개(형상별) 겹쳐 그리면 부엉이 톱니 효과가 한눈에. 한국항공우주학회지의 윙팁 보텍스 논문 1편과 결과 비교.<span class="step-result">✓ 완성품: 와류 가시화 영상 4종 + 상관 분석 표 + 막대그래프 .png 1장.</span></li>
+      <li><b>NASA TRS 1편 + 1쪽 보고서 + 3분 영상 산출</b><span class="step-meta">⏱ 2~3h</span><br>NASA Technical Reports Server(<code>ntrs.nasa.gov</code>)에서 <code>owl serrated edge noise reduction</code> 검색 → 영문 초록 1편만 정리. 보고서 구조: <code>가설 → 설계 → 12조건 결과 → NASA 결과와 비교 → 한계(Re 차이)</code>. 마지막 섹션 "왜 모형 결과가 실제 항공기에 그대로 안 통하는가"를 <b>레이놀즈수</b>로 본인 답. 발표 영상은 iMovie 또는 CapCut으로 3분.<span class="step-result">✓ 완성품: A4 보고서 1쪽 + 3분 발표 영상 .mp4 + NASA 초록 메모 1쪽.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· Tinkercad / Fusion 360 + 학교 3D 프린터<br>· NIOSH SLM 앱(iOS) 또는 SPL Meter(Android)<br>· NASA TRS (<a href="https://ntrs.nasa.gov" target="_blank">ntrs.nasa.gov</a>)<br>· 한국항공우주학회지 (<a href="https://www.ksas.or.kr" target="_blank">ksas.or.kr</a>)</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· 날개 4종 .stl + 실물<br>· 12조건 측정 표 + 와류 영상 4종<br>· 상관 분석 그래프 .png 2장<br>· A4 1쪽 보고서 + 3분 발표 영상</p></div>
+  </div>
+</div>
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">📡 3. 인공지능 정비 예측 모델 — 항공 안전성 분석</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★☆☆</span>
+      <span class="qtag dur">2주</span>
+      <span class="qtag kw">키워드 연결: 항공 정비·AI·안전</span>
+    </div>
+  </div>
+  <div class="quest-why">💙 <b>왜 태건이에게?</b> 2학년 인공지능 기초에서 '항공기 센서 데이터·정비 이력 기반 고장 예측 모델'을 이미 탐색했어. 거기서 한 발만 더 나가면 돼. 실험 부담이 적고 코딩 비중이 낮아 3학년 시기에 가장 안전한 카드. 자기소개서에 '항공 안전을 위한 데이터 활용'을 본인 언어로 박을 수 있어.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>예지정비(PHM, Prognostics & Health Management):</b> 고장 후 수리(사후) → 시간 기준 교체(예방) → 데이터 기반 잔여수명 예측(예지) 3단계 진화. 현재 항공산업 표준은 PHM으로 전환 중.</li>
+      <li><b>잔여수명(RUL, Remaining Useful Life):</b> 부품이 고장까지 얼마나 더 작동할 수 있는지의 추정값. NASA Turbofan 데이터셋의 정답 라벨이고 거의 모든 PHM 논문의 평가 지표.</li>
+      <li><b>이상 패턴(Degradation Trajectory):</b> 정상 운전 → 점진 열화 → 급격 악화의 3단계 곡선. 같은 부품도 운영 조건마다 형태가 달라 — AI가 "급격 악화 시점"을 며칠 일찍 잡아내는지가 핵심 성능.</li>
+      <li><b>False Positive vs False Negative — 안전 비대칭:</b> 항공에서는 <b>놓친 고장(FN)이 거짓 경보(FP)보다 압도적으로 비싸.</b> 그래서 ROC 커브에서 FN을 줄이는 임계점 선택이 최우선.</li>
+      <li><b>인간-AI 분담(Human-in-the-loop):</b> AI는 후보 제시·점수 계산까지, 최종 정비 결정은 사람. <b>CRM과 같은 의사결정 분담 원칙</b>이 정비실에도 그대로 — 자기소개서의 핵심 한 줄이 됨.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실천형</h4><ul><li>공개 데이터(Kaggle 'NASA Turbofan Engine Degradation' 등) 1세트 다운로드</li><li>엑셀·구글스프레드시트로 센서값 시계열 그래프 + 고장 임박 패턴 시각 식별</li><li>'어떤 변수가 고장 N회 전부터 어떻게 변하는가' 패턴 표 1장 작성</li><li>결과를 진로활동 발표 자료로 정리, 'AI는 정비 판단을 어디까지 보조하고 어디부터는 사람이 결정해야 하는가' 본인 의견 포함</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>DBpia '항공기 예지정비 PHM', 'predictive maintenance aviation'</li><li>국토교통부·항공안전기술원 항공안전백서</li><li>대한항공·아시아나 정비기술 보고서(공개분)</li><li>단행본: '하늘에서 떨어진 비행기들(고든 톰슨)' 안전 사례 챕터</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>NASA Turbofan 데이터셋 한 엔진 시계열 보기</b><span class="step-meta">⏱ 30~60분</span><br>Kaggle(<code>kaggle.com</code>) 가입 → <code>NASA Turbofan Engine Degradation</code> 검색 → CMAPSS FD001 다운로드. Google Sheets로 <code>train_FD001.txt</code> 열기 → 엔진 1번의 21개 센서 시계열 중 <code>sensor_2(온도)·sensor_7(압력)·sensor_11(연료비)</code> 3개를 꺾은선 그래프로. 정상 → 열화 → 고장 직전 패턴이 보일 거야.<span class="step-result">✓ 완성품: 엔진 1번 센서 시계열 그래프 .png 1장 + 한 줄 관찰 메모.</span></li>
+      <li><b>엔진 5개 비교 — 고장 N회 전 이상 패턴 표 만들기</b><span class="step-meta">⏱ 1~2h</span><br>Sheets에서 엔진 1·10·20·50·80번 5개를 같은 스케일로 그려 비교. <code>고장 시점 기준 -50/-30/-10 사이클</code>에서 센서 평균값 추출 → 표 작성: <code>엔진ID / 센서명 / -50시점값 / -10시점값 / 변화율</code>. <b>"어떤 센서가 가장 먼저 흔들리는가"</b>를 본인 답으로 한 단락. 도전: <code>=AVERAGE</code> · <code>=STDEV</code> 함수로 통계량 추가.<span class="step-result">✓ 완성품: 5엔진 × 5센서 비교 표 1장 + 이상 패턴 인포그래픽 초안.</span></li>
+      <li><b>Colab에서 RUL 회귀 모델 한 번 돌려보기(선택)</b><span class="step-meta">⏱ 1~2h</span><br>Google Colab에 새 노트북 → 다음 코드로 가장 단순한 회귀:<br><code>import pandas as pd, numpy as np</code><br><code>from sklearn.linear_model import LinearRegression</code><br><code>df = pd.read_csv('train_FD001.txt', sep=' ', header=None)</code><br><code>X = df.iloc[:, 5:26]  # 21개 센서</code><br><code>y = df.groupby(0).cumcount(ascending=False)  # RUL 라벨</code><br><code>model = LinearRegression().fit(X, y)</code><br>예측 RUL과 실제 RUL을 산점도로. 실제 항공 운영 관점에서 "이 모델로 진짜 정비 판단 가능한가"를 본인 답.<span class="step-result">✓ 완성품: RUL 예측 .ipynb 1개 + 산점도 .png 1장.</span></li>
+      <li><b>발표 자료 + Human-in-the-loop 한 페이지</b><span class="step-meta">⏱ 1~2h</span><br>Canva 또는 미리캔버스에서 4쪽 발표자료. 구조: <code>① 사후→예방→예지 진화</code> → <code>② NASA 데이터 분석 결과</code> → <code>③ 이상 패턴·모델 한계(FP/FN 비대칭)</code> → <code>④ AI는 어디까지 / 사람은 어디부터 — Human-in-the-loop</code>. 마지막 슬라이드에 항공안전기술원 항공안전백서 인용 1줄 + 자기소개서 직결 문장. 인공지능 또는 정보 교과샘께 5분 검토.<span class="step-result">✓ 완성품: 발표 PPT 4쪽 + 진로활동 1쪽 보고서. 자기소개서·면접 직결.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· Kaggle (<a href="https://www.kaggle.com" target="_blank">kaggle.com</a>) — NASA Turbofan FD001<br>· Google Colab + Sheets<br>· DBpia (<a href="https://www.dbpia.co.kr" target="_blank">dbpia.co.kr</a>) — '항공기 예지정비 PHM'<br>· 항공안전기술원 항공안전백서 (<a href="https://www.kiast.or.kr" target="_blank">kiast.or.kr</a>)</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· 엔진 시계열 그래프 .png 2장<br>· 5엔진 비교 표 1장<br>· RUL 예측 .ipynb 1개 (선택)<br>· 발표 PPT 4쪽 + 진로활동 보고서 1쪽</p></div>
+  </div>
+</div>
+</div></section>
+
+<section style="background:linear-gradient(135deg,#0c4a6e,#0369a1); color:white;"><div class="container">
+  <div style="text-align:center; padding:32px 0;">
+    <div style="font-size:32px; margin-bottom:16px;">✈️</div>
+    <h2 style="font-size:26px; font-weight:800; margin-bottom:14px;">태건아, 마지막으로.</h2>
+    <div style="max-width:660px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
+      <div style="text-align:left; padding:20px 24px; background:rgba(255,255,255,0.06); border-left:3px solid #bae6fd; border-radius:0 12px 12px 0;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:#bae6fd; margin-bottom:8px;">START · 한 길에서</div>
+        <em style="color:#bae6fd; font-style:normal; font-weight:700; font-size:17px; line-height:1.5; display:block;">"휘천 — 하늘을 밝힌다."</em>
+        <span style="opacity:0.85; font-size:14px; line-height:1.6; display:block; margin-top:8px;">— 빛날 휘, 하늘 천. 진실하고 믿음이 가득한 세상을 만들고 싶다는 가치관과 조종사가 되고 싶은 진로 희망을 담은 호.</span>
+        <span style="opacity:0.55; font-size:12px; display:block; margin-top:6px;">전태건 (1학년 한문Ⅰ)</span>
+      </div>
+      <div style="text-align:left; padding:20px 24px; background:rgba(255,255,255,0.06); border-left:3px solid #38bdf8; border-radius:0 12px 12px 0;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:#38bdf8; margin-bottom:8px;">END · 책임으로</div>
+        <em style="color:#38bdf8; font-style:normal; font-weight:700; font-size:17px; line-height:1.5; display:block;">"Aviate, Navigate, Communicate."</em>
+        <span style="opacity:0.85; font-size:14px; line-height:1.6; display:block; margin-top:8px;">— 먼저 비행하고, 다음에 항법을 잡고, 그다음에 소통하라. 조종사 의사결정의 가장 오래된 우선순위.</span>
+        <span style="opacity:0.55; font-size:12px; display:block; margin-top:6px;">조종사 표준 행동 원칙</span>
+      </div>
+      <p style="font-size:16px; opacity:0.95; line-height:1.8; text-align:center; margin-top:8px;">
+        너의 항공은 <b>"많은 승객의 목숨을 책임진다"</b>는 마음에서 시작해서<br>
+        <b>"그 책임을 정확한 데이터와 절차로 만든다"</b>로 완성될 거야.<br>
+        태건이는 이미 그 항로의 절반은 와 있어. 한 발만 더.
+      </p>
+    </div>
+    <p style="margin-top:24px; font-size:13px; opacity:0.6;">담임 정슬기 선생님 · 2026.05.06 · 다음 점검 6월 3일</p>
+  </div>
+</div></section>
+
+</body>
+</html>

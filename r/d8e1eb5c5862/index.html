@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="ko" data-svg-charts="1">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="format-detection" content="telephone=no">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>최준식 — 나의 생기부 내비게이터</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<style>
+  :root {
+    --primary: #7c3aed;
+    --primary-dark: #5b21b6;
+    --primary-light: #ddd6fe;
+    --primary-soft: #f5f3ff;
+    --ink: #1f2937;
+    --ink-soft: #4b5563;
+    --ink-muted: #9ca3af;
+    --bg: #fafafa;
+    --card: #ffffff;
+    --line: #e5e7eb;
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Pretendard', -apple-system, system-ui, '맑은 고딕', sans-serif; color: var(--ink); background: var(--bg); line-height:1.6; font-size:15px; -webkit-font-smoothing: antialiased; }
+  .container { max-width:960px; margin:0 auto; padding:0 24px; }
+  .hero { background: linear-gradient(135deg, #a78bfa 0%, #6d28d9 55%, #2e1065 100%); color:white; padding:64px 0 88px; position:relative; overflow:hidden; }
+  .hero::before { content:''; position:absolute; top:-100px; right:-80px; width:360px; height:360px; border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 70%); }
+  .hero::after { content:''; position:absolute; bottom:-120px; left:-60px; width:320px; height:320px; border-radius:50%; background: radial-gradient(circle, rgba(124,58,237,0.25), transparent 70%); }
+  .hero .container { position:relative; z-index:2; }
+  .hero-tag { display:inline-block; padding:6px 14px; border-radius:999px; background:rgba(255,255,255,0.18); backdrop-filter: blur(8px); font-size:13px; font-weight:600; margin-bottom:20px; }
+  .hero h1 { font-size:44px; font-weight:800; letter-spacing:-1px; line-height:1.2; margin-bottom:8px; }
+  .hero h1 .name { color:#ddd6fe; }
+  .hero-sub { font-size:18px; opacity:0.92; font-weight:500; margin-bottom:28px; }
+  .hero-oneliner { font-size:22px; font-weight:700; line-height:1.5; padding:24px 28px; border-left:4px solid #ddd6fe; background:rgba(255,255,255,0.08); border-radius:0 12px 12px 0; backdrop-filter: blur(10px); }
+  .hero-oneliner em { color:#ddd6fe; font-style:normal; font-weight:800; }
+  .hero-meta { display:flex; gap:20px; margin-top:24px; flex-wrap:wrap; font-size:14px; opacity:0.85; }
+  .toc { position:sticky; top:0; z-index:50; background:white; border-bottom:1px solid var(--line); padding:12px 0; overflow-x:auto; }
+  .toc-inner { display:flex; gap:4px; max-width:960px; margin:0 auto; padding:0 24px; white-space:nowrap; }
+  .toc a { padding:8px 14px; border-radius:8px; color:var(--ink-soft); text-decoration:none; font-size:13px; font-weight:600; }
+  .toc a:hover { background:var(--primary-soft); color:var(--primary-dark); }
+  section { padding:56px 0; border-bottom:1px solid var(--line); }
+  .sec-num { display:inline-block; font-size:13px; font-weight:800; color:var(--primary); letter-spacing:2px; margin-bottom:8px; }
+  .sec-title { font-size:30px; font-weight:800; letter-spacing:-0.5px; margin-bottom:6px; }
+  .sec-sub { font-size:15px; color:var(--ink-soft); margin-bottom:32px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:16px; padding:24px; }
+  .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:720px) { .grid-3 { grid-template-columns:1fr; } }
+  .radar-wrap { display:grid; grid-template-columns:1.2fr 1fr; gap:24px; align-items:center; }
+  @media (max-width:720px) { .radar-wrap { grid-template-columns:1fr; } }
+  .radar-canvas-wrap { background:var(--primary-soft); border-radius:16px; padding:16px; aspect-ratio:1/1; min-height:340px; position:relative; }
+  .radar-canvas-wrap canvas { display:block; width:100% !important; height:100% !important; }
+  .radar-stats { display:flex; flex-direction:column; gap:12px; }
+  .radar-row { display:grid; grid-template-columns:110px 1fr 40px; align-items:center; gap:12px; padding:10px 14px; background:var(--primary-soft); border-radius:10px; }
+  .radar-row .label { font-weight:700; font-size:14px; }
+  .radar-row .bar { display:block; width:100%; height:10px; background:#fff; border:1px solid var(--primary-light); border-radius:999px; overflow:hidden; }
+  .radar-row .fill { display:block; height:100%; background:var(--primary); border-radius:999px; min-width:6px; }
+  .radar-row .num { text-align:right; font-weight:800; font-size:14px; color:var(--primary-dark); }
+  .radar-row.high .fill { background:linear-gradient(90deg, var(--primary), #5b21b6); }
+  .closing { background:linear-gradient(135deg, #ddd6fe, var(--primary-soft)); border-radius:20px; padding:32px; text-align:center; margin-top:32px; }
+  .closing-title { font-size:22px; font-weight:800; color:var(--primary-dark); margin-bottom:12px; }
+  .closing-body { font-size:15px; color:var(--ink-soft); line-height:1.7; }
+  .kw-cloud { background:linear-gradient(135deg, var(--primary-soft), white); border-radius:16px; padding:32px; min-height:200px; display:flex; flex-wrap:wrap; gap:12px; justify-content:center; align-items:center; }
+  .kw { padding:8px 16px; border-radius:999px; background:white; border:1.5px solid var(--primary-light); font-weight:600; color:var(--primary-dark); }
+  .kw.lg { font-size:28px; padding:12px 24px; background:var(--primary); color:white; border-color:var(--primary); }
+  .kw.md { font-size:20px; padding:10px 20px; background:#a78bfa; color:white; border-color:#a78bfa; }
+  .kw.sm { font-size:14px; }
+  .kw-grade-bar { margin-top:24px; background:white; border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .legend { display:flex; gap:16px; margin-top:16px; flex-wrap:wrap; font-size:12px; color:var(--ink-soft); }
+  .legend span { display:inline-flex; align-items:center; gap:4px; }
+  .legend i { display:inline-block; width:12px; height:12px; border-radius:3px; }
+  .footsteps { display:grid; grid-template-columns:repeat(3,1fr); gap:0; margin-bottom:24px; position:relative; }
+  .footsteps::before { content:''; position:absolute; top:50px; left:12%; right:12%; height:2px; background:repeating-linear-gradient(90deg, var(--primary-light) 0 8px, transparent 8px 16px); z-index:0; }
+  .step { text-align:center; position:relative; z-index:1; padding:16px 12px; }
+  .step-icon { width:100px; height:100px; margin:0 auto 12px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:44px; background:white; border:3px solid var(--primary-light); }
+  .step.active .step-icon { border-color:var(--primary); box-shadow:0 0 0 6px rgba(124,58,237,0.18); }
+  .step.weak .step-icon { border-color:#a78bfa; border-style:dashed; }
+  .step-pct { font-size:28px; font-weight:800; color:var(--primary-dark); margin-top:4px; }
+  .step.weak .step-pct { color:#a78bfa; opacity:0.7; }
+  .step-name { font-weight:700; font-size:15px; margin-top:4px; }
+  .step-desc { font-size:12px; color:var(--ink-muted); margin-top:4px; }
+  .moment { background:white; border:1px solid var(--line); border-radius:16px; padding:24px; transition:transform 0.2s, box-shadow 0.2s; }
+  .moment:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,0.06); }
+  .moment-badge { display:inline-block; padding:4px 10px; background:var(--primary-soft); color:var(--primary-dark); font-size:11px; font-weight:700; border-radius:6px; margin-bottom:10px; }
+  .moment-pattern { display:inline-block; padding:4px 10px; background:#ddd6fe; color:#4c1d95; font-size:11px; font-weight:700; border-radius:6px; margin-bottom:10px; margin-left:6px; }
+  .moment-quote { font-size:14px; line-height:1.7; color:var(--ink-soft); border-left:3px solid var(--primary); padding-left:12px; margin:12px 0; font-style:italic; }
+  .moment-why { font-size:13px; padding:12px; background:var(--primary-soft); border-radius:10px; color:var(--primary-dark); font-weight:500; }
+  .signal-row { display:grid; grid-template-columns:36px 140px 1fr; gap:16px; padding:16px 0; align-items:start; border-bottom:1px solid var(--line); }
+  .signal-row:last-child { border-bottom:none; }
+  .signal-dot { font-size:22px; }
+  .signal-label { font-weight:700; font-size:14px; }
+  .signal-detail { font-size:13px; color:var(--ink-soft); }
+  .signal-detail .h-구체화 { background:#dbeafe; padding:1px 4px; border-radius:3px; }
+  .signal-detail .h-개별화 { background:#d1fae5; padding:1px 4px; border-radius:3px; }
+  .signal-detail .h-총평 { background:#fde68a; padding:1px 4px; border-radius:3px; }
+  .signal-detail .stale { background:#fecaca; padding:1px 4px; border-radius:3px; text-decoration:line-through; text-decoration-color:#ef4444; }
+  .signal-fix { margin-top:10px; padding:10px 12px; background:var(--primary-soft); border-radius:8px; font-size:13px; color:var(--primary-dark); }
+  .pattern-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; align-items:center; }
+  @media (max-width:720px) { .pattern-grid { grid-template-columns:1fr; } }
+  .pattern-list { display:flex; flex-direction:column; gap:10px; }
+  .pattern-item { display:grid; grid-template-columns:24px 1fr 60px; align-items:center; gap:12px; padding:12px 14px; background:white; border:1px solid var(--line); border-radius:10px; }
+  .pattern-item .pn { width:24px; height:24px; border-radius:50%; background:var(--primary); color:white; font-size:12px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .pattern-item.empty .pn { background:var(--ink-muted); }
+  .pattern-item .pname { font-weight:600; font-size:14px; }
+  .pattern-item .pcount { text-align:right; font-weight:800; font-size:16px; color:var(--primary-dark); }
+  .pattern-item.empty { background:#fef3c7; border-color:#fde68a; }
+  .pattern-item.empty .pcount { color:var(--ink-muted); }
+  .action-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  @media (max-width:720px) { .action-grid { grid-template-columns:1fr; } }
+  .action-card { background:linear-gradient(135deg, var(--primary), var(--primary-dark)); color:white; border-radius:16px; padding:24px; position:relative; overflow:hidden; }
+  .action-card::before { content:''; position:absolute; top:-40px; right:-40px; width:120px; height:120px; border-radius:50%; background:rgba(255,255,255,0.1); }
+  .action-num { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.25); display:flex; align-items:center; justify-content:center; font-weight:800; margin-bottom:14px; position:relative; z-index:1; }
+  .action-title { font-size:17px; font-weight:800; margin-bottom:12px; line-height:1.4; position:relative; z-index:1; }
+  .action-meta { font-size:12px; opacity:0.85; margin-bottom:12px; position:relative; z-index:1; }
+  .action-body { font-size:13px; line-height:1.6; opacity:0.95; position:relative; z-index:1; }
+  .action-deadline { margin-top:14px; padding:6px 10px; background:rgba(221,214,254,0.95); color:#4c1d95; border-radius:6px; font-size:11px; font-weight:700; display:inline-block; position:relative; z-index:1; }
+  .quest { background:white; border:2px solid var(--line); border-radius:16px; padding:24px; margin-bottom:16px; position:relative; }
+  .quest::before { content:''; position:absolute; left:-2px; top:-2px; bottom:-2px; width:6px; background:var(--primary); border-radius:16px 0 0 16px; }
+  .quest-header { display:flex; justify-content:space-between; align-items:start; margin-bottom:12px; flex-wrap:wrap; gap:8px; }
+  .quest-title { font-size:18px; font-weight:800; }
+  .quest-tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .qtag { padding:3px 10px; border-radius:999px; font-size:11px; font-weight:700; }
+  .qtag.diff { background:#ddd6fe; color:#4c1d95; }
+  .qtag.dur { background:var(--primary-soft); color:var(--primary-dark); }
+  .qtag.kw { background:#ede9fe; color:#5b21b6; }
+  .quest-why { font-size:13px; color:var(--ink-soft); margin-bottom:14px; padding:10px 12px; background:var(--bg); border-radius:8px; }
+  .quest-tracks { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:720px) { .quest-tracks { grid-template-columns:1fr; } }
+  .quest-track { border:1px dashed var(--line); border-radius:10px; padding:14px; }
+  .quest-track h4 { font-size:13px; font-weight:800; color:var(--primary-dark); margin-bottom:8px; }
+  .quest-track ul { list-style:none; font-size:13px; color:var(--ink-soft); }
+  .quest-track li { padding:3px 0; padding-left:14px; position:relative; }
+  .quest-track li::before { content:''; position:absolute; left:0; top:12px; width:6px; height:6px; border-radius:50%; background:var(--primary); }
+  .quest-bg { margin-top:14px; padding:14px 16px; background:var(--primary-soft); border-radius:10px; border-left:3px solid var(--primary); }
+  .quest-bg h4 { font-size:12px; font-weight:800; color:var(--primary-dark); margin-bottom:8px; letter-spacing:0.5px; }
+  .quest-bg ul { list-style:none; }
+  .quest-bg li { padding:5px 0 5px 14px; font-size:12.5px; color:var(--ink-soft); position:relative; line-height:1.6; }
+  .quest-bg li::before { content:'•'; position:absolute; left:2px; color:var(--primary-dark); font-weight:800; }
+  .quest-bg li b { color:var(--ink); }
+  .quest-howto { margin-top:12px; padding:14px 16px; background:white; border:1px solid var(--line); border-radius:10px; }
+  .quest-howto h4 { font-size:12px; font-weight:800; color:var(--primary-dark); margin-bottom:10px; letter-spacing:0.5px; }
+  .quest-howto ol { list-style:none; counter-reset:step; }
+  .quest-howto li { padding:6px 0 6px 28px; font-size:12.5px; color:var(--ink-soft); line-height:1.6; counter-increment:step; position:relative; }
+  .quest-howto li::before { content:counter(step); position:absolute; left:0; top:6px; width:20px; height:20px; border-radius:50%; background:var(--primary); color:white; font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center; }
+  .quest-howto li b { color:var(--ink); }
+  .quest-howto code { background:var(--primary-soft); padding:1px 6px; border-radius:4px; font-family:'SF Mono', 'Menlo', 'Courier New', monospace; font-size:11.5px; color:var(--primary-dark); border:1px solid var(--primary-light); }
+  .quest-howto .step-meta { display:inline-block; margin-left:4px; padding:1px 7px; background:var(--primary-light); color:var(--primary-dark); border-radius:99px; font-size:10.5px; font-weight:700; vertical-align:middle; }
+  .quest-howto .step-result { display:block; margin-top:4px; font-size:11.5px; color:var(--primary-dark); padding:5px 8px; background:var(--primary-soft); border-radius:6px; border-left:2px solid var(--primary); }
+  .quest-meta { display:grid; grid-template-columns:repeat(2,1fr); gap:10px; margin-top:12px; }
+  @media (max-width:720px) { .quest-meta { grid-template-columns:1fr; } }
+  .quest-meta-card { background:white; border:1px solid var(--line); border-radius:8px; padding:10px 12px; }
+  .quest-meta-card h5 { font-size:11px; font-weight:800; color:var(--primary-dark); margin-bottom:5px; letter-spacing:0.5px; }
+  .quest-meta-card p { font-size:12px; color:var(--ink-soft); line-height:1.5; }
+  .quest-meta-card a { color:var(--primary-dark); text-decoration:none; border-bottom:1px dotted var(--primary-dark); }
+  @media print { .toc { display:none; } body { background:white; font-size:11pt; } section { page-break-inside:avoid; padding:24pt 0; } .hero { padding:32pt 0; } }
+
+  /* === 모바일 (≤480px) 반응형 패치 === */
+  @media (max-width:480px) {
+    body { font-size:14px; }
+    .container { padding:0 16px; }
+    .hero { padding:44px 0 56px; }
+    .hero h1 { font-size:28px; letter-spacing:-0.5px; line-height:1.25; }
+    .hero-sub { font-size:14px; margin-bottom:20px; }
+    .hero-oneliner { font-size:14.5px; padding:16px 18px; line-height:1.65; border-radius:0 10px 10px 0; }
+    .hero-tag { font-size:11px; margin-bottom:14px; }
+    .hero-meta { font-size:11.5px; gap:8px 14px; margin-top:18px; }
+    .toc { padding:8px 0; }
+    .toc-inner { padding:0 16px; gap:2px; }
+    .toc a { padding:6px 10px; font-size:12px; }
+    section { padding:36px 0; }
+    .sec-num { font-size:11px; letter-spacing:1.5px; }
+    .sec-title { font-size:21px; }
+    .sec-sub { font-size:13.5px; margin-bottom:22px; }
+    .card { padding:16px; border-radius:14px; }
+    /* 레이더 차트 — aspect-ratio 1/1 풀고 고정 높이로 */
+    .radar-wrap { gap:18px; }
+    .radar-canvas-wrap { aspect-ratio:auto; min-height:0; height:300px; padding:10px; }
+    .radar-stats { gap:8px; }
+    .radar-row { grid-template-columns:84px 1fr 36px; padding:8px 10px; gap:8px; }
+    .radar-row .label { font-size:12.5px; }
+    .radar-row .num { font-size:12.5px; }
+    .closing { padding:18px !important; border-radius:14px; }
+    .closing-title { font-size:14px !important; }
+    .closing-body { font-size:13px !important; line-height:1.65; }
+    /* 키워드 클라우드 */
+    .kw-cloud { padding:22px 14px; min-height:auto; gap:8px; }
+    .kw { font-size:12px; padding:6px 12px; }
+    .kw.lg { font-size:18px; padding:8px 14px; }
+    .kw.md { font-size:14px; padding:7px 12px; }
+    .kw.sm { font-size:11.5px; padding:5px 10px; }
+    .kw-grade-bar { padding:14px; }
+    .kw-grade-bar h3 { font-size:13.5px; }
+    /* 머리·가슴·발 — 3열 유지하되 아이콘과 폰트 축소 */
+    .footsteps::before { display:none; }
+    .step { padding:8px 4px; }
+    .step-icon { width:62px; height:62px; font-size:26px; border-width:2px; margin-bottom:8px; }
+    .step.active .step-icon { box-shadow:0 0 0 4px rgba(245,158,11,0.18); }
+    .step-pct { font-size:18px; margin-top:2px; }
+    .step-name { font-size:11.5px; margin-top:2px; }
+    .step-desc { font-size:10px; margin-top:2px; line-height:1.4; }
+    /* 베스트 모먼트 */
+    .moment { padding:18px; }
+    .moment h3 { font-size:15px !important; }
+    .moment-quote { font-size:13px; line-height:1.65; padding-left:10px; }
+    .moment-why { font-size:12.5px; padding:10px; }
+    .moment-badge, .moment-pattern { font-size:10.5px; padding:3px 8px; }
+    /* 시그널 행 — 라벨/디테일을 세로 적층 */
+    .signal-row { grid-template-columns:28px 1fr; gap:8px 10px; padding:14px 0; }
+    .signal-row > div:nth-child(2) { grid-column:2; }
+    .signal-row .signal-detail { grid-column:1 / -1; margin-top:2px; }
+    .signal-dot { font-size:18px; }
+    .signal-label { font-size:13px; }
+    .signal-detail { font-size:12.5px; line-height:1.65; }
+    .signal-fix { font-size:12px; padding:9px 11px; margin-top:8px; }
+    .legend { font-size:11px; gap:10px; }
+    /* 패턴 분포 */
+    .pattern-grid { gap:16px; }
+    .pattern-item { grid-template-columns:22px 1fr 48px; padding:10px 12px; gap:10px; }
+    .pattern-item .pname { font-size:12.5px; }
+    .pattern-item .pcount { font-size:14px; }
+    /* 4주 액션 */
+    .action-card { padding:20px; border-radius:14px; }
+    .action-num { width:28px; height:28px; font-size:13px; }
+    .action-title { font-size:15.5px; margin-bottom:10px; }
+    .action-meta { font-size:11px; }
+    .action-body { font-size:12.5px; line-height:1.65; }
+    .action-deadline { font-size:10.5px; padding:5px 9px; }
+    /* 탐구 퀘스트 */
+    .quest { padding:18px; border-radius:14px; }
+    .quest-header { gap:6px; margin-bottom:10px; }
+    .quest-title { font-size:15.5px; line-height:1.4; }
+    .qtag { font-size:10px; padding:2px 8px; }
+    .quest-why { font-size:12.5px; padding:10px 12px; line-height:1.65; }
+    .quest-bg, .quest-howto { padding:12px 14px; }
+    .quest-bg h4, .quest-howto h4 { font-size:11.5px; }
+    .quest-bg li { font-size:12px; padding:4px 0 4px 12px; }
+    .quest-howto li { font-size:12px; padding:6px 0 6px 26px; line-height:1.65; }
+    .quest-howto li::before { width:18px; height:18px; font-size:10.5px; top:7px; }
+    .quest-howto code { font-size:11px; padding:1px 5px; }
+    .quest-howto .step-meta { font-size:10px; padding:1px 6px; }
+    .quest-howto .step-result { font-size:11px; padding:5px 8px; margin-top:4px; }
+    .quest-track { padding:12px; }
+    .quest-track h4 { font-size:12.5px; }
+    .quest-track li { font-size:12.5px; }
+    .quest-meta { gap:8px; }
+    .quest-meta-card { padding:10px 12px; }
+    .quest-meta-card h5 { font-size:10.5px; }
+    .quest-meta-card p { font-size:11.5px; }
+  }
+
+  /* === 노션 임베드 환경에서 더 자연스럽게 === */
+  html, body { overscroll-behavior:contain; }
+  /* sticky toc가 노션 임베드 안에서 어색할 수 있어 살짝 조정 */
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="container">
+    <span class="hero-tag">📊 나의 생기부 내비게이터 · 2026.05.06</span>
+    <h1>증명으로 길을 내는<br><span class="name">준식</span>의 색, 한 장에 담았어.</h1>
+    <p class="hero-sub">3학년 10반 22번 최준식 · 수학 연구(수리 연구원) 지망</p>
+    <div class="hero-oneliner">
+      준식아, 너는 1학년 '이공계'라는 넓은 출발점에서 2학년 <em>'수학 연구'</em>로 정확히 좁히고, 그 뒤 한 줄로 쭉 깊어진 학생이야.<br>해석학·미적분·미분방정식이라는 같은 언어가 SIR 모델·기후 모델링·구분구적법·음함수 미분 자기증명까지 <em>'수학으로 세계를 설명한다'</em> 한 방향으로 모이고 있어.
+    </div>
+    <div class="hero-meta">
+      <span>📅 분석일: 2026.05.06</span>
+      <span>📐 진로: 수학 연구 (수리 연구원)</span>
+      <span>👩‍🏫 담임 정슬기 선생님</span>
+    </div>
+  </div>
+</header>
+
+<nav class="toc"><div class="toc-inner">
+  <a href="#s2">② 6대 역량</a><a href="#s3">③ 키워드 맵</a><a href="#s4">④ 머리·가슴·발</a>
+  <a href="#s5">⑤ 베스트 모먼트</a><a href="#s6">⑥ 시그널</a><a href="#s7">⑦ 패턴</a>
+  <a href="#s8">⑧ 4주 액션</a><a href="#s9">⑨ 탐구 퀘스트</a>
+</div></nav>
+
+<section id="s2"><div class="container">
+  <span class="sec-num">SECTION 02</span>
+  <h2 class="sec-title">너의 학종 능력치, 한 화면에</h2>
+  <p class="sec-sub">2015 개정 교육과정 6대 핵심역량 기준으로, 네 활동에서 추출한 점수야. 채점이 아니라 <b>"지금까지 쌓아둔 자산"</b>의 시각화로 봐줘.</p>
+  <div class="card">
+    <div class="radar-wrap">
+      <div class="radar-canvas-wrap"><svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid meet">
+<path d="M 200.0,127.0 L 221.7,139.5 L 221.7,164.5 L 200.0,177.0 L 178.3,164.5 L 178.3,139.5 Z" fill="none" stroke="#7c3aed26" stroke-width="1"/>
+<path d="M 200.0,102.0 L 243.3,127.0 L 243.3,177.0 L 200.0,202.0 L 156.7,177.0 L 156.7,127.0 Z" fill="none" stroke="#7c3aed26" stroke-width="1"/>
+<path d="M 200.0,77.0 L 265.0,114.5 L 265.0,189.5 L 200.0,227.0 L 135.0,189.5 L 135.0,114.5 Z" fill="none" stroke="#7c3aed26" stroke-width="1"/>
+<path d="M 200.0,52.0 L 286.6,102.0 L 286.6,202.0 L 200.0,252.0 L 113.4,202.0 L 113.4,102.0 Z" fill="none" stroke="#7c3aed26" stroke-width="1"/>
+<line x1="200" y1="152" x2="200.0" y2="52.0" stroke="#7c3aed33" stroke-width="1"/>
+<line x1="200" y1="152" x2="286.6" y2="102.0" stroke="#7c3aed33" stroke-width="1"/>
+<line x1="200" y1="152" x2="286.6" y2="202.0" stroke="#7c3aed33" stroke-width="1"/>
+<line x1="200" y1="152" x2="200.0" y2="252.0" stroke="#7c3aed33" stroke-width="1"/>
+<line x1="200" y1="152" x2="113.4" y2="202.0" stroke="#7c3aed33" stroke-width="1"/>
+<line x1="200" y1="152" x2="113.4" y2="102.0" stroke="#7c3aed33" stroke-width="1"/>
+<path d="M 200.0,64.0 L 279.7,106.0 L 277.9,197.0 L 200.0,226.0 L 126.4,194.5 L 119.5,105.5 Z" fill="#7c3aed40" stroke="#7c3aed" stroke-width="2.5" stroke-linejoin="round"/>
+<circle cx="200.0" cy="64.0" r="4" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
+<circle cx="279.7" cy="106.0" r="4" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
+<circle cx="277.9" cy="197.0" r="4" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
+<circle cx="200.0" cy="226.0" r="4" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
+<circle cx="126.4" cy="194.5" r="4" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
+<circle cx="119.5" cy="105.5" r="4" fill="#7c3aed" stroke="#fff" stroke-width="2"/>
+<text x="200.0" y="30.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">자기관리</text>
+<text x="303.9" y="96.0" text-anchor="start" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">지식정보처리</text>
+<text x="303.9" y="216.0" text-anchor="start" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">창의적 사고</text>
+<text x="200.0" y="286.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">심미적 감성</text>
+<text x="96.1" y="216.0" text-anchor="end" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">의사소통</text>
+<text x="96.1" y="96.0" text-anchor="end" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, -apple-system, sans-serif">공동체</text>
+</svg></div>
+      <div class="radar-stats">
+<div class="radar-row "><span class="label">자기관리</span><span class="bar"><span class="fill" style="width:88%"></span></span><span class="num">88</span></div>
+<div class="radar-row high"><span class="label">지식정보처리</span><span class="bar"><span class="fill" style="width:92%"></span></span><span class="num">92</span></div>
+<div class="radar-row high"><span class="label">창의적 사고</span><span class="bar"><span class="fill" style="width:90%"></span></span><span class="num">90</span></div>
+<div class="radar-row "><span class="label">심미적 감성</span><span class="bar"><span class="fill" style="width:74%"></span></span><span class="num">74</span></div>
+<div class="radar-row "><span class="label">의사소통</span><span class="bar"><span class="fill" style="width:85%"></span></span><span class="num">85</span></div>
+<div class="radar-row high"><span class="label">공동체</span><span class="bar"><span class="fill" style="width:93%"></span></span><span class="num">93</span></div>
+</div>
+    </div>
+    <div class="closing" style="margin-top:24px;background:var(--primary-soft);padding:18px 22px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;margin-bottom:4px;">🎯 코치 한마디</div>
+      <div class="closing-body" style="font-size:14px;">준식아, <b>공동체(93)</b>가 가장 높아 — 1학년장·2학년장·학생회장(2025.08~2026.02)으로 이어지는 자치 리더십, 셈본2 동아리 기장, 영자신문반 동아리 기장, 봉사 89시간이 한 흐름으로 묶여 있어. <b>지식정보처리(92)·창의적 사고(90)</b>는 거의 동률인데, 이건 우연이 아니야. 수학Ⅱ에서 시그마와 구분구적법의 구조적 유사성을 직접 짚고 리만합·르베그 적분까지 비교한 사고, 기하에서 음함수 미분으로 접선 일반식을 자기 증명한 사고가 둘 다 <b>"공식 적용"이 아니라 "원리 재구성"</b>이거든. 수학과 학종에서 가장 무겁게 보는 항목이야. 한 가지만 — <b>심미적 감성(74)</b>이 상대적으로 낮아. 2학년 음악 C가 신호인데, 이건 약점이 아니라 <b>너의 무게중심이 명확히 수리 쪽</b>이라는 뜻이라 오히려 일관성으로 읽혀. 면접에서 "수학 외 영역에서도 미술 창작에서 비례·명암 단계 변화로 공간감을 표현했다(미술창작 A)"처럼 한 줄 자산화하면 충분히 보완돼.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s3" style="background:var(--primary-soft);"><div class="container">
+  <span class="sec-num">SECTION 03</span>
+  <h2 class="sec-title">너만의 키워드 3개</h2>
+  <p class="sec-sub">학종 평가의 한 가지 분명한 원칙: <b>"한 키워드로 1→2→3학년이 이어지면 학종에서 최고점"</b>.</p>
+  <div class="kw-cloud"><span class="kw lg">해석학·미적분</span><span class="kw lg">수리 모델링</span><span class="kw md">증명·엄밀성</span><span class="kw md">패턴·구조 사고</span><span class="kw">미분방정식</span><span class="kw">기하·접선</span><span class="kw sm">SIR 모델</span><span class="kw sm">구분구적법</span><span class="kw sm">음함수 미분</span></div>
+  <div class="kw-grade-bar">
+    <h3 style="font-size:15px;font-weight:800;margin-bottom:14px;">키워드 수직 연계 — 학년별 깊이</h3>
+    <svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;">
+<line x1="36" y1="164.0" x2="584" y2="164.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="168.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">0</text>
+<line x1="36" y1="129.0" x2="584" y2="129.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="133.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">4</text>
+<line x1="36" y1="94.0" x2="584" y2="94.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="98.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">8</text>
+<line x1="36" y1="59.0" x2="584" y2="59.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="63.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">12</text>
+<line x1="36" y1="24.0" x2="584" y2="24.0" stroke="#e5e7eb" stroke-width="1"/>
+<text x="28" y="28.0" text-anchor="end" font-size="11" fill="#9ca3af" font-family="Pretendard, sans-serif">16</text>
+<rect x="81.7" y="146.5" width="91.3" height="17.5" fill="#a78bfa" rx="3"/>
+<rect x="81.7" y="137.8" width="91.3" height="8.8" fill="#7c3aed" rx="3"/>
+<rect x="81.7" y="129.0" width="91.3" height="8.8" fill="#5b21b6" rx="3"/>
+<text x="127.3" y="123.0" text-anchor="middle" font-size="13" font-weight="800" fill="#4b5563" font-family="Pretendard, sans-serif">4</text>
+<text x="127.3" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">1학년</text>
+<rect x="264.3" y="102.8" width="91.3" height="61.2" fill="#a78bfa" rx="3"/>
+<rect x="264.3" y="59.0" width="91.3" height="43.8" fill="#7c3aed" rx="3"/>
+<rect x="264.3" y="24.0" width="91.3" height="35.0" fill="#5b21b6" rx="3"/>
+<text x="310.0" y="18.0" text-anchor="middle" font-size="13" font-weight="800" fill="#4b5563" font-family="Pretendard, sans-serif">16</text>
+<text x="310.0" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">2학년</text>
+<text x="492.7" y="186.0" text-anchor="middle" font-size="13" font-weight="700" fill="#4b5563" font-family="Pretendard, sans-serif">3학년</text>
+</svg>
+    <div class="legend"><span><i style="background:#a78bfa"></i>해석학·미적분</span><span><i style="background:#7c3aed"></i>수리 모델링</span><span><i style="background:#5b21b6"></i>증명·엄밀성</span></div>
+    <div class="closing" style="background:white;margin-top:18px;padding:14px 18px;text-align:left;border:1px dashed var(--primary);">
+      <div class="closing-body" style="font-size:13px;">✨ <b>잘하고 있는 점:</b> 1학년 '이공계열'에서 출발해 2학년에 <b>'수학 연구'</b>로 뾰족하게 좁힌 흐름이 자연스러워. 그냥 좁힌 게 아니라 <span style='color:var(--primary-dark);font-weight:700;'>'케이스 데블린-수학의 언어'·'학문의 즐거움'·'수학의 숲을 걷다'</span> 독서 → 해석개론·복소함수론 학과 탐색 → 셈본2 동아리 기장으로 미적분의 수학사·제논의 역설·세균 증식 모델링까지 하나로 이어졌어. 이건 진로 전환이 아니라 <b>전환 이후의 일관성 확보</b>야 — 학종이 가장 좋아하는 형태. 🌱 <b>다음 한 걸음:</b> 3학년 자율·진로활동 한 곳에서 <b>'증명·엄밀성'</b>을 직접 이름으로 써 주는 한 줄(예: "수학적 엄밀성을 유지하기 위해 가정의 한계를 함께 적었다")을 의도적으로 박아두자. 1·2학년 두 키워드에 3번째 축까지 3학년에 또렷이 솟으면 수직 연계 완성.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s4"><div class="container">
+  <span class="sec-num">SECTION 04</span>
+  <h2 class="sec-title">머리 → 가슴 → 발</h2>
+  <p class="sec-sub">공부의 세 단계 지도. <b>머리(이론) → 가슴(탐구) → 발(실천·산출물)</b>까지 갔을 때 세특이 진짜 살아나.</p>
+  <div class="card">
+    <div class="footsteps">
+      <div class="step active"><div class="step-icon">🧠</div><div class="step-pct">42%</div><div class="step-name">머리 · 이론</div><div class="step-desc">해석학·미적분·증명</div></div>
+      <div class="step active"><div class="step-icon">❤️</div><div class="step-pct">38%</div><div class="step-name">가슴 · 탐구</div><div class="step-desc">호기심에서 출발한 모델링</div></div>
+      <div class="step weak"><div class="step-icon">🦶</div><div class="step-pct">20%</div><div class="step-name">발 · 실천</div><div class="step-desc">신문·발표·산출물 공유</div></div>
+    </div>
+    <div class="closing" style="background:#ddd6fe;padding:18px 22px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;color:var(--primary-dark);margin-bottom:4px;">🚶 한 발 더</div>
+      <div class="closing-body" style="font-size:14px;color:#4c1d95;">준식아, 너는 <b>머리(이론) 비중이 가장 큰 학생</b>이야 — 수학과 지망생으로서 정확히 옳은 분포지. 케이스 데블린의 패턴 중심 사고를 받아들이고, 리만합·르베그 적분의 차이를 직접 비교하고, 음함수 미분으로 접선 일반식을 스스로 유도한 그 흐름이 <b>'머리'</b>의 뼈대야. 가슴(탐구)도 SIR 모델 자체 도입·기후위기 수학적 모델링·놀이기구 대기시간 미분 최적화로 충분히 채워졌어. 한 가지만 — <b>발(실천)</b>은 이미 <span style='font-weight:700;'>영자신문 수학 기사 2편, 셈본2 수학 신문(미적분 수학사·제논의 역설·세균 증식), 교과융합 수업에서 지수·로그 미적분을 직접 설명하기</span>까지 와 있는데, 이걸 한 단계만 더 — <b>"내가 만든 자료를 다른 학생이 읽고 이해할 수 있는 형태(증명 노트·수업 자료·해설 영상 1편)"</b>로 외부화하면 학종 평가자에게 <b>'수학을 가르치는 사람의 그림자'</b>가 더 또렷이 보여. 학생회장으로서 이미 갖춘 전달력을 수학 산출물에도 한 번씩 입혀보자.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s5" style="background:var(--bg);"><div class="container">
+  <span class="sec-num">SECTION 05</span>
+  <h2 class="sec-title">너의 베스트 모먼트 3</h2>
+  <p class="sec-sub">생기부에서 가장 잘 쓰인 문장 3개. <b>왜 좋은지</b>를 우수 세특 패턴 분류로 풀어줄게.</p>
+  <div class="grid-3">
+<div class="moment">
+  <span class="moment-badge">🟢 기하 (진로선택) · 2학년</span>
+  <span class="moment-pattern">패턴 ① 동기·과정·결과·확장 + ⑥ 머리·가슴·발 통합</span>
+  <h3 style="font-size:16px;font-weight:800;">음함수 미분으로 쌍곡선·포물선 접선 일반식 자기 증명</h3>
+  <p class="moment-quote">"교과서 기본형에서 벗어나 쌍곡선의 방정식에 직접 미분을 적용해 기울기 표현식을 구하고, 연립방정식·판별식을 활용해 접선의 일반식을 직접 유도. 포물선에서도 음함수 미분 등 고급 방법을 써서 표준 절차가 아닌 자기 주도적 증명을 시행함. 다양한 곡선에 동일 논리를 확장하려 시도."</p>
+  <div class="moment-why">✨ 수학과 학종이 가장 좋아하는 장면이야 — 공식 적용이 아니라 공식을 만드는 과정. 진로선택 A(96점) 등급과 함께 보면 단순 점수가 아닌 정량적 수학 능력의 증거.</div>
+</div>
+<div class="moment">
+  <span class="moment-badge">🟢 수학Ⅱ · 2학년</span>
+  <span class="moment-pattern">패턴 ② 키워드 연계형 + ③ 호기심·탐구형</span>
+  <h3 style="font-size:16px;font-weight:800;">시그마와 구분구적법의 구조적 유사성 — 리만합·르베그까지</h3>
+  <p class="moment-quote">"시그마로 표현되는 수열의 합과 구분구적법의 연관성에 주목하여 이산적인 합이 연속적인 적분으로 확장될 수 있는지 탐구. 일반항을 함수 관점에서 해석하고 극한을 취하는 과정으로 구분구적법이 정적분에 수렴하는 원리를 논리적으로 전개. 리만합과 르베그 적분의 접근 방식을 비교 관찰하며 연속성·불연속성, 상합·하합의 차이를 분석함."</p>
+  <div class="moment-why">✨ 고등학교 교과서 범위를 명백히 넘어선 시야인데 무리하지 않고 자연스럽게 도달한 게 핵심. '해석학을 공부하고 싶다'는 진로 동기가 세특에 그대로 박힌 사례.</div>
+</div>
+<div class="moment">
+  <span class="moment-badge">🟢 진로활동 · 2학년</span>
+  <span class="moment-pattern">패턴 ② 키워드 연계형 + ⑤ 반성적 실마리형</span>
+  <h3 style="font-size:16px;font-weight:800;">기후 위기 해결의 수학적 접근 — 한계까지 함께 적기</h3>
+  <p class="moment-quote">"'기후 위기 해결에서 수학적 접근의 중요성'을 주제로, 환경·지구과학·물리 중심 접근이 기후 시스템의 복잡성과 불확실성을 완전히 설명하는 데 한계가 있음을 인식. 유체역학·미분방정식·위상수학이 홍수·가뭄·폭염 해결에 활용됨을 정리하면서, '비선형 시스템 해석·불확실성 정량화에는 수학이 강점이지만 모델 가정의 한계도 존재한다'는 양면을 균형 있게 서술."</p>
+  <div class="moment-why">✨ 수학을 옹호만 하지 않고 한계까지 같이 쓴 게 결정적. '수학적 엄밀성을 추구한다'는 자세를 보여주는 가장 강한 증거. 수학과 면접에서 그대로 인용 가능.</div>
+</div></div>
+</div></section>
+
+<section id="s6"><div class="container">
+  <span class="sec-num">SECTION 06</span>
+  <h2 class="sec-title">시그널 점검 — 3색 형광펜</h2>
+  <p class="sec-sub">모든 세특을 <b>구체화 → 개별화 → 성장 총평</b> 3축으로 분해했어. 빈 칸이 어디인지 한눈에.</p>
+  <div class="card">
+    <div class="legend" style="margin-bottom:16px;">
+      <span><i style="background:#dbeafe"></i> 구체화</span>
+      <span><i style="background:#d1fae5"></i> 개별화</span>
+      <span><i style="background:#fde68a"></i> 성장 총평</span>
+      <span><i style="background:#fecaca"></i> 상투 표현</span>
+    </div>
+
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">기하 (진로선택) · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">양호 · 자기 증명</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>쌍곡선·포물선 접선 일반식을 음함수 미분 등 고급 방법으로 자기 주도적 증명을 시행했고, 연립방정식·판별식을 직접 활용함.</span> <span class='h-개별화'>교과서 기본형 절차에서 벗어나 다양한 곡선에 동일 논리를 확장하려 시도한 점이 본인 색.</span> <span class='h-총평'>"기하와 미적분을 융합적으로 사고하는 역량"으로 닫아주어 진로 학과의 핵심 역량과 직접 연결.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">동아리(셈본2) · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">양호 · 동아리 기장 + 본질적 독해</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>'수학의 언어(케이스 데블린)'를 읽고 미적분을 풀이 도구가 아닌 해석학적 관점의 언어로 수용함.</span> <span class='h-개별화'>수학 신문 활동에서 미적분 수학사(뉴턴-라이프니츠 논쟁)·제논의 역설·세균 증식 모델링을 직접 골라 심도 있게 다룸.</span> <span class='h-총평'>전공 도서 → 신문 산출물 → 부원 협업까지의 흐름이 동아리 기장이라는 직책과 자연스럽게 맞물림.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟢</span>
+  <div>
+    <div class="signal-label">자율활동 · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">양호 · 비판적 자기점검</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>놀이기구 대기시간 불균형을 연속함수로 설정하고 미분으로 극값을 찾는 방식으로 최적 운행 시간을 탐색, 2차 미분으로 극소값을 검증함.</span> <span class='h-개별화'>"실제 대기시간 데이터는 불연속성과 급격한 변화 구간을 포함할 수 있음"을 인식하고 수학적 가정의 한계를 비판적으로 분석한 점이 본인 색.</span> <span class='h-총평'>비비탄 총 실험에서 속도 센서 원리를 미적분으로 다시 설명한 흐름까지 이어진 게 강력함.</span></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟡</span>
+  <div>
+    <div class="signal-label">생명과학Ⅰ · 2학년</div>
+    <div style="font-size:11px;color:var(--ink-muted);">한 줄만 더하면 완성</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>코로나19 확산을 미분방정식 기반 SIR 모델에 회복자 변수를 도입해 직접 보완하며 모델링함.</span> 그러나 마지막이 <span class='stale'>스스로 문제의식을 가질 줄 아는 태도와 탐구적 접근 방식이 인상적임</span>으로 닫혀, 본인이 도달한 <b>수학적 결론(예: 회복자 변수 도입 전후 곡선 형태 차이)</b>이 비어 있어.<div class="signal-fix">💡 <b>3학년에 같은 흐름이 반복된다면</b> "회복자 변수를 도입한 SIR 모델에서 감염 정점이 ○주에서 ○주로 늦춰지고 누적 감염자가 ○% 감소하는 형태로 변화한다는 결론을 도출함" 식의 <b>수치/형태 결론 한 줄</b>을 꼭 부탁드리자. 수리 연구원 진로에 가장 어울리는 마무리.</div></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🔴</span>
+  <div>
+    <div class="signal-label">1학년 수학</div>
+    <div style="font-size:11px;color:var(--ink-muted);">상투 표현 누적</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>수학 주제 탐구로 파워포인트 발표·토론을 진행함</span>까지는 있지만, 그 앞뒤가 <span class='stale'>복잡한 문제에 대한 분석 능력이 뛰어나고·창의적 해결책을 모색하는 태도가 인상적·지식 적용 능력이 뛰어나며·논리적이고 체계적인 사고 과정·간결한 표현·자기 주도적으로 학습하고 탐구하는 태도</span>로 가득해 학생 개인이 보이지 않아.<div class="signal-fix">💡 <b>걱정 마, 이미 1학년이라 수정은 불가능해</b>. 다만 자기소개서·면접에서 "1학년 수학 주제 탐구의 주제(예: ○○)와 결론을 한 문장으로" 미리 준비해두자. 1학년 수학 1등급 + 2학년 기하 A(96) + 셈본2 동아리 기장으로 만회는 충분히 됐어.</div></div>
+</div>
+<div class="signal-row">
+  <span class="signal-dot">🟡</span>
+  <div>
+    <div class="signal-label">2학년 진로활동 (말미)</div>
+    <div style="font-size:11px;color:var(--ink-muted);">의의 한 줄 부족</div>
+  </div>
+  <div class="signal-detail"><span class='h-구체화'>기후위기 수학적 모델링 + 교대근무자 수면 미분방정식 모델링까지 진로활동 본문은 매우 알참.</span> <span class='h-개별화'>연구 윤리(피험자 수면 통제 금지 원칙)까지 명시한 점이 본인 색.</span> 다만 마지막이 "교대 근무자 수면 관리 시스템으로 확장될 수 있음을 탐색함"으로 닫혀, <b>본인이 다음에 무엇을 더 알고 싶어졌는지</b>가 빠짐.<div class="signal-fix">💡 <b>3학년 진로활동 마지막 한 줄은</b> "이번 활동 후 비선형 동역학·확률미분방정식 등 학부 단계 해석학 도구를 더 공부하고 싶어졌다" 같은 본인 언어를 부탁드리자. 학과 적합성에 직접 가산.</div></div>
+</div>
+  </div>
+</div></section>
+
+<section id="s7" style="background:var(--bg);"><div class="container">
+  <span class="sec-num">SECTION 07</span>
+  <h2 class="sec-title">너의 세특 패턴 분포</h2>
+  <p class="sec-sub">우수 세특 사례를 분석해 도출한 6가지 패턴.</p>
+  <div class="card">
+    <div class="pattern-grid">
+      <div><svg viewBox="0 0 280 280" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;display:block;max-width:280px;margin:0 auto;">
+<path d="M 140.00 44.00 A 96 96 0 0 1 235.67 147.93 L 197.80 144.79 A 58 58 0 0 0 140.00 82.00 Z" fill="#a78bfa" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 235.67 147.93 A 96 96 0 0 1 94.31 224.43 L 112.40 191.01 A 58 58 0 0 0 197.80 144.79 Z" fill="#7c3aed" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 94.31 224.43 A 96 96 0 0 1 46.94 116.43 L 83.77 125.76 A 58 58 0 0 0 112.40 191.01 Z" fill="#5b21b6" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 46.94 116.43 A 96 96 0 0 1 81.04 64.24 L 104.38 94.23 A 58 58 0 0 0 83.77 125.76 Z" fill="#c4b5fd" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<path d="M 81.04 64.24 A 96 96 0 0 1 140.00 44.00 L 140.00 82.00 A 58 58 0 0 0 104.38 94.23 Z" fill="#8b5cf6" stroke="#fff" stroke-width="3" stroke-linejoin="round"/>
+<text x="140" y="136" text-anchor="middle" font-size="11" font-weight="600" fill="#9ca3af" font-family="Pretendard, sans-serif">총 세특 패턴</text>
+<text x="140" y="158" text-anchor="middle" font-size="22" font-weight="800" fill="#1f2937" font-family="Pretendard, sans-serif">19건</text>
+</svg></div>
+      <div class="pattern-list"><div class="pattern-item"><span class="pn">1</span><span class="pname">동기·과정·결과·확장</span><span class="pcount">5건</span></div><div class="pattern-item"><span class="pn">2</span><span class="pname">키워드 연계형</span><span class="pcount">6건</span></div><div class="pattern-item"><span class="pn">3</span><span class="pname">호기심·탐구형</span><span class="pcount">4건</span></div><div class="pattern-item empty"><span class="pn">4</span><span class="pname">질문 인용형</span><span class="pcount">0건</span></div><div class="pattern-item"><span class="pn">5</span><span class="pname">반성적 실마리형</span><span class="pcount">2건</span></div><div class="pattern-item"><span class="pn">6</span><span class="pname">머리·가슴·발 통합</span><span class="pcount">2건</span></div></div>
+    </div>
+    <div class="closing" style="background:#ddd6fe;padding:18px 22px;margin-top:20px;text-align:left;">
+      <div class="closing-title" style="font-size:15px;color:var(--primary-dark);margin-bottom:6px;">🎯 가장 시급한 패턴: ④ 질문 인용형</div>
+      <div class="closing-body" style="font-size:14px;color:#4c1d95;">준식아, 6패턴 중 5개가 단단하고 ④ '질문 인용형'만 비어 있어. 평가자 시선이 가장 빨리 잡히는 게 따옴표로 묶인 의문문이야. 3학년 자율·진로활동·과제 발표 중 한 곳에서, 활동 도입에 <b>"왜 같은 미적분 공식이 어떤 곡선에서는 통하고 어떤 곡선에서는 정의되지 않을까?"</b> 또는 <b>"비선형 미분방정식이 카오스로 가는 경계는 어디일까?"</b>처럼 따옴표 의문문 한 줄을 박아달라고 부탁드려보자. 30초면 추가되고, 그 한 줄이 너의 호기심을 보여주는 가장 큰 무기가 돼.</div>
+    </div>
+  </div>
+</div></section>
+
+<section id="s8"><div class="container">
+  <span class="sec-num">SECTION 08</span>
+  <h2 class="sec-title">다음 4주 액션 카드</h2>
+  <p class="sec-sub">진단으로 끝내지 않을게. 6월 3일까지 네가 할 수 있는 <b>구체적인 행동 3가지</b>.</p>
+  <div class="action-grid">
+<div class="action-card">
+  <div class="action-num">1</div>
+  <div class="action-meta">수학과 차별화 · 증명 노트</div>
+  <h3 class="action-title">'음함수 미분 접선 증명' 1쪽 증명 노트로 외부화</h3>
+  <p class="action-body">기하 세특에 박힌 쌍곡선·포물선 접선 자기증명을 1쪽짜리 증명 노트(가정·정리·증명·따름정리·확장 질문) 형식으로 깔끔하게 정리하자. 자기소개서·면접·교사 추천서 보강 자료 모두에 직결되는 한 장. 셈본2 동아리 후배에게 1회 발표 + 자료 공유까지 가면 '발(실천)' 단계까지 채워.</p>
+  <span class="action-deadline">📅 ~ 5월 16일</span>
+</div>
+<div class="action-card">
+  <div class="action-num">2</div>
+  <div class="action-meta">세특 보강 · 질문 인용형</div>
+  <h3 class="action-title">활동 도입에 따옴표 의문문 한 줄 박기</h3>
+  <p class="action-body">3학년 자율·진로활동 중 한 곳에서 도입에 의문문 한 줄을 따옴표로: <b>"비선형 미분방정식이 카오스로 가는 경계는 어디일까?"</b> 같은 식. 담임샘·교과샘께 "이 문장을 활동 동기로 기록해주세요"라고 미리 부탁드리자. 비어 있는 패턴 ④가 한 번에 채워져.</p>
+  <span class="action-deadline">📅 ~ 5월 24일</span>
+</div>
+<div class="action-card">
+  <div class="action-num">3</div>
+  <div class="action-meta">진로 일관성 · 전환 한 줄</div>
+  <h3 class="action-title">'이공계 → 수학 연구' 전환 동기, 3학년 진로활동에 명시</h3>
+  <p class="action-body">2학년에 좁힌 진로 동기를 3학년 진로활동에 본인 언어로 한 번 더 박아두자. 예: "1학년 이공계 전반에 관심이 있었으나, 케이스 데블린의 '수학의 언어'를 읽고 모든 자연·사회 현상의 패턴 언어로서 수학 자체를 연구하고 싶다는 방향이 분명해졌다." 한 줄이 학과 적합성에서 큰 무게가 돼.</p>
+  <span class="action-deadline">📅 ~ 6월 3일</span>
+</div></div>
+</div></section>
+
+<section id="s9" style="background:var(--primary-soft);"><div class="container">
+  <span class="sec-num">SECTION 09</span>
+  <h2 class="sec-title">이번 학기 탐구 퀘스트 3</h2>
+  <p class="sec-sub">너의 키워드를 한 단계 더 깊게 가져갈 탐구 3종.</p>
+
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">📐 1. 음함수 미분·매개변수 미분의 통합 — 다양한 곡선의 접선 증명 시리즈</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★☆</span>
+      <span class="qtag dur">3주</span>
+      <span class="qtag kw">키워드 연결: 해석학·증명·기하</span>
+    </div>
+  </div>
+  <div class="quest-why">💜 <b>왜 준식이에게?</b> 2학년 기하에서 쌍곡선·포물선까지 자기증명에 도달한 흐름을 타원·사이클로이드·심장형곡선 등으로 확장하면 같은 키워드(증명·엄밀성)가 1단계 더 깊어져. 셈본2 동아리·수학 신문 활동과도 자연스럽게 연결돼서 산출물 외부화까지 갈 수 있어.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>음함수(Implicit function):</b> y를 x의 식으로 명시적으로 풀 수 없는 곡선의 표현(예: x²+y²=1). 양변을 x로 미분해 dy/dx를 끌어내는 게 핵심.</li>
+      <li><b>매개변수 곡선(Parametric curve):</b> x=f(t), y=g(t) 꼴로 시간(또는 매개변수) t에 따라 점이 움직이는 곡선. 사이클로이드·심장형곡선이 대표 예.</li>
+      <li><b>접선의 일반식:</b> 한 점 (x₀, y₀)에서의 기울기 dy/dx를 구해 y−y₀ = m(x−x₀)로 표현. 음함수·매개변수에서는 미분 절차가 달라져.</li>
+      <li><b>해석적 함수(Analytic function):</b> 모든 점에서 테일러급수가 수렴하는 함수. 접선·고차근사·코시-리만 방정식의 출발점이 되는 가장 핵심적인 개념.</li>
+      <li><b>증명의 엄밀성(Rigor):</b> "그림으로 명백하다"가 아니라 "정의·정리에서 한 줄씩 따라온다"로 끝맺는 것. 해석학·복소함수론에서 가장 중요한 학문 태도.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실천형</h4><ul><li>대상 곡선 5종 선정 (타원·쌍곡선·포물선·사이클로이드·심장형곡선)</li><li>각 곡선마다 음함수 미분 / 매개변수 미분으로 접선 일반식 유도</li><li>방법별 장단점 비교표 작성 — 어떤 곡선에 어떤 방식이 자연스러운가</li><li>1쪽짜리 '증명 노트' 시리즈로 정리 → 셈본2 동아리 후배 대상 강의 1회</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>고등학교 기하 교과서(2015·2022 개정) + 미적분Ⅱ 교과서 음함수·매개변수 단원</li><li>대학 미적분학 교재(Stewart·김홍종) 음함수 정리 챕터</li><li>대한수학회지 교육 섹션 '학교수학에서의 음함수 미분 지도' 키워드로 RISS 검색</li><li>단행본: '미적분 다시 보기(데이비드 베를린스키)' 도함수 챕터</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>GeoGebra로 곡선 5종 그리고 한 점 잡기</b><span class="step-meta">⏱ 30분~1h</span><br>GeoGebra(<code>geogebra.org/calculator</code>)에서 음함수 입력으로 <code>x^2/4+y^2=1</code>(타원), <code>x^2-y^2=1</code>(쌍곡선), <code>y^2=4x</code>(포물선), 매개변수 입력으로 <code>Curve(t-sin(t), 1-cos(t), t, 0, 2pi)</code>(사이클로이드), <code>Curve(2(1-cos(t))cos(t), 2(1-cos(t))sin(t), t, 0, 2pi)</code>(심장형곡선) 그리기. 각 곡선마다 접선을 구할 점 1개씩 찍어 좌표 메모.<span class="step-result">✓ 완성품: GeoGebra 파일 1개(.ggb) + 곡선 5종 + 표시점 5개의 좌표 표 1장.</span></li>
+      <li><b>음함수 미분으로 타원·쌍곡선·포물선 접선 손증명</b><span class="step-meta">⏱ 1~2h</span><br>타원 양변 미분: <code>x/2 + y(dy/dx) = 0</code> → <code>dy/dx = -x/(4y)</code>. 1단계에서 잡은 점 좌표를 대입해 기울기 m 산출 → 접선식 <code>y-y₀=m(x-x₀)</code> 완성. 쌍곡선·포물선도 같은 절차 반복. Wolfram Alpha(<code>wolframalpha.com</code>)에 <code>tangent line to x^2/4+y^2=1 at (...)</code>로 검산.<span class="step-result">✓ 완성품: 손글씨 증명 노트 3쪽(곡선당 1쪽) + Wolfram 검산 스크린샷.</span></li>
+      <li><b>매개변수 미분으로 사이클로이드·심장형곡선 접선 유도</b><span class="step-meta">⏱ 1~2h</span><br>매개변수 미분 공식 <code>dy/dx = (dy/dt)/(dx/dt)</code>를 직접 적용. 사이클로이드: <code>dx/dt = 1-cos(t)</code>, <code>dy/dt = sin(t)</code> → 특정 t값(예: t=π/2)에서 기울기 산출. <b>도전 포인트:</b> 사이클로이드의 첨점(t=0, 2π)에서 dx/dt=dy/dt=0이 되는 이유와 그때 접선이 어떻게 정의되는지 한 단락. (해석학의 '극한 접선' 개념이 자연스럽게 등장)<span class="step-result">✓ 완성품: 매개변수 증명 노트 2쪽 + 첨점 해석 단락 1쪽.</span></li>
+      <li><b>방법 비교표 + 셈본2 강의안 작성</b><span class="step-meta">⏱ 2~3h</span><br>표 양식 <code>곡선 / 음함수 가능성 / 매개변수 가능성 / 추천 방식 / 이유</code>로 5종 정리. 결론 단락에 "왜 사이클로이드는 음함수가 거의 불가능한가"를 한 단락(힌트: 초월방정식). 셈본2 동아리 다음 모임에서 30분 강의안 1쪽 + 슬라이드 5장으로 정리해 후배에게 강의 1회. 수학 신문 다음 호 기사 1편(A4 1쪽)으로 외부화.<span class="step-result">✓ 완성품: 비교표 1장 + 강의안 1쪽 + 슬라이드 5장 + 수학 신문 기사 1편. 자기소개서 핵심 자료로 직결.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· GeoGebra (<a href="https://www.geogebra.org/calculator" target="_blank">geogebra.org/calculator</a>) — 곡선 그리기·접선 시각화<br>· Wolfram Alpha (<a href="https://www.wolframalpha.com" target="_blank">wolframalpha.com</a>) — 손증명 검산<br>· 대한수학회지 교육 섹션 (<a href="https://www.kms.or.kr" target="_blank">kms.or.kr</a>) — RISS 키워드 <code>음함수 미분 지도</code><br>· Stewart 미적분학 + 김홍종 미적분학 (학교 도서관)</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· 증명 노트 시리즈 5쪽 (곡선당 1쪽)<br>· GeoGebra 파일 1개 (.ggb)<br>· 방법 비교표 + 강의안 1쪽<br>· 셈본2 수학 신문 게재 기사 1편</p></div>
+  </div>
+</div>
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">🦠 2. SIR → SEIR 모델 비교 시뮬레이션 — 미분방정식의 정량적 영향</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★★☆</span>
+      <span class="qtag dur">2~3주</span>
+      <span class="qtag kw">키워드 연결: 수리 모델링·미분방정식·해석</span>
+    </div>
+  </div>
+  <div class="quest-why">💜 <b>왜 준식이에게?</b> 2학년 생명과학Ⅰ에서 '회복자 변수를 도입한 SIR 모델'까지는 갔는데, 모델 수정의 정량적 효과(피크 시점·총 감염자)까지는 닫지 못했어. 인공지능 기초 A 등급의 코딩 역량과 정확히 만나는 영역이고, 수학과 진로의 핵심인 '미분방정식 해석'을 직접 보여주기에 가장 자연스러운 카드.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>구획 모델(Compartmental Model):</b> 인구를 S(감수성)·I(감염)·R(회복) 등 칸으로 나누고 칸 사이 이동을 미분방정식으로 쓴 모델. 산업응용수학의 가장 고전적인 ODE 사례.</li>
+      <li><b>SIR 방정식:</b> dS/dt = -βSI/N, dI/dt = βSI/N - γI, dR/dt = γI. 비선형 연립 ODE라서 손으로 해석해(closed-form)는 안 풀려도 수치적분으로는 깨끗이 풀려.</li>
+      <li><b>기초감염재생산수 R₀:</b> R₀ = β/γ. R₀ &gt; 1이면 유행, R₀ &lt; 1이면 자연 소멸. <b>이 임계값(threshold)이 미분방정식의 분기(bifurcation)와 같은 의미</b>야.</li>
+      <li><b>SEIR 모델:</b> SIR + E(잠복기 노출자). 잠복기 σ가 추가돼 dE/dt = βSI/N - σE 항이 생김. 코로나19·홍역처럼 잠복이 긴 병에서 피크 시점이 늦춰지는 효과를 정량화할 수 있어.</li>
+      <li><b>리만합·수치적분(Numerical integration):</b> 미분방정식의 시간 변화를 잘게 쪼개 누적하는 방법(오일러·룽게-쿠타). 1학년 구분구적법에서 키운 직관이 그대로 SIR 시뮬레이션의 토대가 돼.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실천형</h4><ul><li>Python(또는 GeoGebra)으로 SIR / SIRS / SEIR 모델 수치해 비교</li><li>변수: β(전염률)·γ(회복률)·σ(잠복률) 변화에 따른 곡선 형태</li><li>R₀ 임계값 부근의 거동을 정량으로 — 피크 시점/높이/누적 감염자</li><li>비교 결과를 셈본2 수학 신문 다음 호 기사 1편으로 작성·발표</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>대한수학회 '수학동아·Horizon' SIR 모델 해설 자료</li><li>RISS·DBpia '감염병 수리모델', 'compartmental model'</li><li>한국과학기술원(KAIST)·서울대 수리과학부 산업수학 보고서</li><li>단행본: '수학으로 풀어보는 감염병의 비밀(브라우어)' 또는 'Mathematical Models in Population Biology(Brauer-Castillo-Chavez)' 1·2장 발췌</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>Colab에서 SIR 기본 시뮬레이터 만들기</b><span class="step-meta">⏱ 1h</span><br>Google Colab(<code>colab.research.google.com</code>)에서 새 노트북 → <code>scipy.integrate.odeint</code>로 SIR 풀기:<br><code>from scipy.integrate import odeint</code><br><code>import numpy as np, matplotlib.pyplot as plt</code><br><code>def sir(y,t,beta,gamma,N): S,I,R=y; return [-beta*S*I/N, beta*S*I/N-gamma*I, gamma*I]</code><br><code>t=np.linspace(0,160,1000); y0=[999,1,0]</code><br><code>sol=odeint(sir,y0,t,args=(0.3,0.1,1000))</code><br><code>plt.plot(t,sol); plt.legend(['S','I','R'])</code><span class="step-result">✓ 완성품: SIR 기본 곡선 그래프 .png + 노트북 .ipynb. R₀=β/γ=3 케이스 1장.</span></li>
+      <li><b>R₀ 임계값 부근 분기 행동 관찰</b><span class="step-meta">⏱ 1~2h</span><br>γ는 0.1 고정, β를 0.05·0.10·0.15·0.20·0.25·0.30으로 6번 바꿔 R₀=0.5/1.0/1.5/2.0/2.5/3.0 시나리오 비교. 각 케이스에서 <b>피크 시점·피크 높이·총 감염자(R(∞))</b>를 표로 기록. <b>도전 포인트:</b> R₀=1 부근에서 곡선 형태가 질적으로 바뀌는 순간을 한 단락으로 — 이게 바로 <code>분기 이론(bifurcation theory)</code>의 가장 단순한 예시.<span class="step-result">✓ 완성품: 시나리오 6종 그래프 6장 + 정량 비교 표 1장 + R₀ 분기 해석 1단락.</span></li>
+      <li><b>SEIR로 확장하고 잠복률 σ 영향 분석</b><span class="step-meta">⏱ 2h</span><br>방정식에 E(노출자) 칸 추가:<br><code>def seir(y,t,beta,sigma,gamma,N): S,E,I,R=y; return [-beta*S*I/N, beta*S*I/N-sigma*E, sigma*E-gamma*I, gamma*I]</code><br>σ=1/2(잠복 2일)·1/5(잠복 5일)·1/10(잠복 10일)으로 비교. SIR 대비 <b>피크 시점이 얼마나 미뤄지는지(days)·피크 높이가 얼마나 낮아지는지(%)</b> 정량화. (도전) Wolfram Alpha로 <code>solve dI/dt=0</code> 조건의 해석해 확인.<span class="step-result">✓ 완성품: SIR vs SEIR 비교 그래프 3쌍 + 잠복률 영향 정량표.</span></li>
+      <li><b>수학 신문 기사 + 발표 슬라이드로 외부화</b><span class="step-meta">⏱ 2~3h</span><br>셈본2 수학 신문 다음 호 기사 1편(A4 2쪽) — 구조: <code>왜 미분방정식이 감염병 모델인가</code> → <code>SIR 기본 곡선</code> → <code>R₀ 분기</code> → <code>SEIR 확장 효과</code>. 발표 슬라이드 8~10장으로 동아리 발표 1회. 수학 교과샘 또는 산업수학회지 글(<a href="https://www.ksiam.org" target="_blank">ksiam.org</a>) 1편 인용해 신뢰도 ↑. 코드 GitHub 또는 Colab 공유 링크로 외부화 완료.<span class="step-result">✓ 완성품: 신문 기사 1편 + 발표 슬라이드 1세트 + 공개 Colab 노트북. 자기소개서·면접 핵심 자료로 직결.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· Google Colab + scipy/numpy/matplotlib (<a href="https://colab.research.google.com" target="_blank">colab.research.google.com</a>)<br>· Wolfram Alpha (<a href="https://www.wolframalpha.com" target="_blank">wolframalpha.com</a>) — 해석해 검산<br>· 한국산업응용수학회(KSIAM) (<a href="https://www.ksiam.org" target="_blank">ksiam.org</a>) — 산업수학 보고서<br>· KCI·DBpia (<a href="https://www.kci.go.kr" target="_blank">kci.go.kr</a>) — <code>compartmental model</code>, <code>감염병 수리모델</code></p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· Python 노트북 1개 (.ipynb) — SIR/SEIR 통합<br>· 시나리오 비교 그래프 12장 + 정량표 2장<br>· 셈본2 수학 신문 기사 1편 (A4 2쪽)<br>· 동아리 발표 슬라이드 1세트 (8~10장)</p></div>
+  </div>
+</div>
+<div class="quest">
+  <div class="quest-header">
+    <h3 class="quest-title">🌀 3. 제논의 역설부터 ε–δ까지 — '극한의 엄밀화' 수학사 정리</h3>
+    <div class="quest-tags">
+      <span class="qtag diff">난이도 ★☆☆</span>
+      <span class="qtag dur">3~4주(분산)</span>
+      <span class="qtag kw">키워드 연결: 해석학·증명·수학사</span>
+    </div>
+  </div>
+  <div class="quest-why">💜 <b>왜 준식이에게?</b> 셈본2 동아리에서 이미 다룬 제논의 역설·뉴턴-라이프니츠 논쟁의 후속편. 같은 주제를 한 단계 더 깊게(코시-바이어슈트라스의 ε–δ 형식화까지) 가져가는 흐름이라 '키워드 수직 연계' 패턴이 1→3학년까지 이어져. 실험이 필요 없는 문헌 중심이라 3학년 시기에 가장 안전한 카드. 해석학 학과 적합성에 직결되는 자료.</div>
+  <div class="quest-bg">
+    <h4>📚 알아두면 좋은 핵심 이론</h4>
+    <ul>
+      <li><b>제논의 역설(Zeno's paradox):</b> "아킬레스가 거북이를 못 따라잡는다"식의 무한 분할 역설. 무한합 1/2+1/4+1/8+…=1을 직관적으로 닫지 못하던 고대의 한계 — 극한 개념의 출발점.</li>
+      <li><b>뉴턴-라이프니츠 무한소(Infinitesimal):</b> 17C 미적분의 토대지만 "0인지 0이 아닌지" 모호. 버클리의 비판(<i>The Analyst</i>, 1734) 이후 100년간 수학자들이 진땀 흘리던 시기.</li>
+      <li><b>엡실론-델타(ε-δ) 정의:</b> "임의의 ε&gt;0에 대해 δ&gt;0이 존재해 |x-a|&lt;δ이면 |f(x)-L|&lt;ε" — 코시(1821)·바이어슈트라스가 정착시킨 극한의 엄밀한 형식. 해석학의 출발선.</li>
+      <li><b>코시 수열(Cauchy sequence)·완비성(Completeness):</b> 자기 자신끼리 점점 가까워지면 수렴한다는 보장이 실수계의 본질적 성질. 유리수계(빠진 점이 있음)와 실수계를 가르는 기준.</li>
+      <li><b>리만합·르베그 적분(Riemann/Lebesgue integral):</b> 19~20C 적분 개념의 두 단계. 리만이 구간을 자르고, 르베그가 함숫값을 자른다 — 같은 면적을 다른 시선으로 정의한 혁신.</li>
+    </ul>
+  </div>
+  <div class="quest-tracks">
+    <div class="quest-track"><h4>A. 실천형</h4><ul><li>타임라인 인포그래픽 1장: 제논(BC 5세기) → 뉴턴/라이프니츠(17C) → 코시(19C) → 바이어슈트라스(19C) → 르베그(20C)</li><li>각 시기마다 '극한'을 어떻게 다뤘는지 핵심 수식 1개씩</li><li>ε–δ 정의의 짧은 증명 예제(예: lim x²=4 at x→2)를 본인 손으로 작성</li><li>인포그래픽 + 증명 예제를 셈본2 수학 신문에 게재 → 3학년 자율탐구로 연결</li></ul></div>
+    <div class="quest-track"><h4>B. 문헌형</h4><ul><li>'수학의 언어(케이스 데블린)' 패턴·해석학 챕터 재독</li><li>'수학사(데이비드 벌린스키 / 이언 스튜어트)' 코시·바이어슈트라스 단원</li><li>RISS 'ε–δ 정의 지도', '극한의 엄밀화' 키워드</li><li>한국수학교육학회지 '학교수학에서 극한의 직관과 형식의 간격' 류 논문</li><li>단행본: '해석학의 산책(라스무스 본자스)' 1·2장</li></ul></div>
+  </div>
+  <div class="quest-howto">
+    <h4>🚀 어떻게 시작하면 될까</h4>
+    <ol>
+      <li><b>책 두 권에서 핵심 인용 5개 메모</b><span class="step-meta">⏱ 1~2h</span><br>'수학의 언어(케이스 데블린)' 해석학 챕터 + '수학사(이언 스튜어트)' 코시·바이어슈트라스 단원을 학교 도서관에서 빌리기. 시기별 키워드: <code>제논·아르키메데스</code>·<code>뉴턴·라이프니츠 무한소</code>·<code>코시 1821 ε-δ</code>·<code>바이어슈트라스 형식화</code>·<code>르베그 적분 1902</code>. 각 시기마다 책에서 한 문장씩 인용 + 본인 한 줄 해석 메모.<span class="step-result">✓ 완성품: 시기 5단계 × 인용 1줄 + 해석 1줄의 메모 표 1장.</span></li>
+      <li><b>ε–δ 정의로 lim(x→2) x²=4 손증명</b><span class="step-meta">⏱ 1~2h</span><br>표준 절차: 임의의 ε&gt;0에 대해 |x²-4|=|x-2||x+2|&lt;ε이 되도록 δ를 잡기. <b>핵심 트릭:</b> |x-2|&lt;1로 제한하면 |x+2|&lt;5 → δ=min(1, ε/5)로 잡으면 끝. 손글씨로 "필요·충분" 한 줄씩 따라가며 적기. (도전) <code>리만합 르베그 적분</code> 비교를 위해 디리클레 함수의 리만 적분 불가능성을 한 단락 추가.<span class="step-result">✓ 완성품: ε–δ 손증명 노트 1쪽 + 리만 vs 르베그 비교 1쪽.</span></li>
+      <li><b>GeoGebra로 ε–δ 시각화 + 타임라인 인포그래픽</b><span class="step-meta">⏱ 2~3h</span><br>GeoGebra(<code>geogebra.org</code>)에서 슬라이더 ε·δ 만들고 함수 y=x²·점 (2,4) 주변의 직사각형(±ε, ±δ)이 ε이 줄어들 때 δ도 작아지는 모습을 동적으로 확인 → 화면 캡처 3장. Canva(<code>canva.com</code>) 또는 미리캔버스로 A4 1매 타임라인: <code>제논 BC 5C → 뉴턴 17C → 코시 1821 → 바이어슈트라스 1860s → 르베그 1902</code> + 시기별 핵심 수식 1개.<span class="step-result">✓ 완성품: GeoGebra 시각화 캡처 3장 + 타임라인 인포그래픽 A4 1매.</span></li>
+      <li><b>수학 신문 게재 + 3학년 자율탐구로 외부화</b><span class="step-meta">⏱ 2~3h</span><br>셈본2 수학 신문 다음 호 기사 1편(A4 2~3쪽) — 구조: <code>제논의 역설</code> → <code>무한소 시대의 모호함</code> → <code>코시·바이어슈트라스의 형식화</code> → <code>ε–δ 손증명 1개</code> → <code>르베그까지의 확장</code>. 마지막에 "왜 해석학에서 엄밀성이 중요한가"를 본인 답으로 한 단락. 3학년 자율탐구 보고서 5쪽으로 이어가서 <code>해석적 함수 코시-리만</code>·<code>엡실론 델타 정의</code>를 키워드로 박아두기.<span class="step-result">✓ 완성품: 수학 신문 기사 1편 + 자율탐구 보고서 5쪽. 학과 적합성 핵심 자료로 직결.</span></li>
+    </ol>
+  </div>
+  <div class="quest-meta">
+    <div class="quest-meta-card"><h5>🛠️ 사용 도구·자료</h5><p>· GeoGebra (<a href="https://www.geogebra.org" target="_blank">geogebra.org</a>) — ε–δ 시각화<br>· KCI·RISS (<a href="https://www.kci.go.kr" target="_blank">kci.go.kr</a>) — <code>ε–δ 정의 지도</code>·<code>극한의 엄밀화</code><br>· 한국수학교육학회지 (<a href="https://www.ksme.info" target="_blank">ksme.info</a>) — 학교수학 직관·형식 간격 논문<br>· 단행본: 수학의 언어(케이스 데블린) · 해석학의 산책 · 수학사(이언 스튜어트) — 학교 도서관</p></div>
+    <div class="quest-meta-card"><h5>📦 산출물</h5><p>· 시기별 인용 메모 표 1장<br>· ε–δ 손증명 노트 1쪽 + 리만 vs 르베그 비교 1쪽<br>· 타임라인 인포그래픽 A4 1매 + GeoGebra 시각화 캡처 3장<br>· 셈본2 수학 신문 기사 1편 + 3학년 자율탐구 보고서 5쪽</p></div>
+  </div>
+</div>
+</div></section>
+
+<section style="background:linear-gradient(135deg,#1e1b4b,#2e1065); color:white;"><div class="container">
+  <div style="text-align:center; padding:32px 0;">
+    <div style="font-size:32px; margin-bottom:16px;">📐</div>
+    <h2 style="font-size:26px; font-weight:800; margin-bottom:14px;">준식아, 마지막으로.</h2>
+    <div style="max-width:660px; margin:0 auto; display:flex; flex-direction:column; gap:24px;">
+      <div style="text-align:left; padding:20px 24px; background:rgba(255,255,255,0.06); border-left:3px solid #ddd6fe; border-radius:0 12px 12px 0;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:#ddd6fe; margin-bottom:8px;">START · 패턴에서</div>
+        <em style="color:#ddd6fe; font-style:normal; font-weight:700; font-size:17px; line-height:1.5; display:block;">"Mathematics is the science of patterns."</em>
+        <span style="opacity:0.85; font-size:14px; line-height:1.6; display:block; margin-top:8px;">— 수학은 패턴의 과학이다.</span>
+        <span style="opacity:0.55; font-size:12px; display:block; margin-top:6px;">키스 데블린, 『수학의 언어』</span>
+      </div>
+      <div style="text-align:left; padding:20px 24px; background:rgba(255,255,255,0.06); border-left:3px solid #a78bfa; border-radius:0 12px 12px 0;">
+        <div style="font-size:12px; font-weight:700; letter-spacing:1px; color:#a78bfa; margin-bottom:8px;">END · 증명으로</div>
+        <em style="color:#a78bfa; font-style:normal; font-weight:700; font-size:17px; line-height:1.5; display:block;">"In mathematics you don't understand things. You just get used to them."</em>
+        <span style="opacity:0.85; font-size:14px; line-height:1.6; display:block; margin-top:8px;">— 수학에서는 무언가를 이해하는 것이 아니라, 그것에 익숙해지는 것이다.</span>
+        <span style="opacity:0.55; font-size:12px; display:block; margin-top:6px;">존 폰 노이만</span>
+      </div>
+      <p style="font-size:16px; opacity:0.95; line-height:1.8; text-align:center; margin-top:8px;">
+        너의 수학은 <b>"세계의 패턴을 발견한다"</b>는 호기심에서 시작해서<br>
+        <b>"그 패턴을 엄밀하게 증명한다"</b>로 완성될 거야.<br>
+        준식이는 이미 그 길의 절반은 와 있어. 한 걸음만 더.
+      </p>
+    </div>
+    <p style="margin-top:24px; font-size:13px; opacity:0.6;">담임 정슬기 선생님 · 2026.05.06 · 다음 점검 6월 3일</p>
+  </div>
+</div></section>
+
+</body>
+</html>
