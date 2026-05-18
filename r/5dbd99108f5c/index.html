@@ -455,7 +455,7 @@
     <div class="signal-label">1학년 수학·영어</div>
     <div style="font-size:11px;color:var(--ink-muted);">상투 표현 누적</div>
   </div>
-  <div class="signal-detail">수학 세특이 <span class='stale'>적극적으로 참여·학습 열정과 자기 주도적 태도·창의적 사고와 비판적 분석 능력·깊이 있는 탐구 정신</span>으로 가득 채워져 학생 개인이 보이지 않아. 영어도 <span class='stale'>분위기를 활발하게 만드는데 기여·꾸준한 향상</span>처럼 일반론.<div class="signal-fix">💡 <b>걱정 마, 1학년이라 수정은 불가능</b>. 다만 면접·자기소개서에서 '내가 1학년 수학·영어로 무엇을 했는지' 한 문장(예: 의료 통계·진로 영문 자료 읽기)을 미리 준비해두자. 2학년 약물 농도·전분 플라스틱·영어Ⅱ 친환경 연료 본문 기획으로 충분히 만회됨.</div></div>
+  <div class="signal-detail">수학 세특이 <span class='stale'>적극적으로 참여·학습 열정과 자기 주도적 태도·창의적 사고와 비판적 분석 능력·깊이 있는 탐구 정신</span>으로 가득 채워져 학생 개인이 보이지 않아. 영어도 <span class='stale'>분위기를 활발하게 만드는데 기여·꾸준한 향상</span>처럼 일반론.<div class="signal-fix">💡 <b>걱정 마, 1학년이라 수정은 불가능</b>. 다만 면접에서 '내가 1학년 수학·영어로 무엇을 했는지' 한 문장(예: 의료 통계·진로 영문 자료 읽기)을 미리 준비해두자. 2학년 약물 농도·전분 플라스틱·영어Ⅱ 친환경 연료 본문 기획으로 충분히 만회됨.</div></div>
 </div>
   </div>
 </div></section>
@@ -546,7 +546,7 @@
       <li><b>완충액 3종 + 카페인 표준용액 만들기</b><span class="step-meta">⏱ 1~2h</span><br>학교 화학실에서 pH 4(아세트산-아세트산나트륨), pH 7(인산), pH 10(탄산) 완충액 50mL씩 준비. 카페인 표준 농도 <code>1.0 mg/mL</code> 모액 100mL. 안전: 카페인은 흡입·피부접촉 주의 — 보안경·장갑·후드 필수. KOSHA MSDS(<code>kosha.or.kr</code>)에서 카페인 무수물 안전자료 1장 출력해 실험노트 첨부.<span class="step-result">✓ 완성품: pH 3종 × 카페인 용액 시리즈 + MSDS 1장.</span></li>
       <li><b>온도 3종(25·40·60℃)에서 시간별 농도 측정</b><span class="step-meta">⏱ 3~4h</span><br>각 pH·온도 조합에서 0·30·60·120·240분에 1mL 샘플링 → 즉시 얼음물로 급랭(반응 정지). 학교 분광광도계 273nm 흡광도 측정 또는 스마트폰 RGB 분석(<code>RGB Color Picker</code> 앱) 후 검량선으로 농도 환산. 데이터는 Google Sheets에 <code>시간 / pH / T / A / [C]</code> 5열로 정리.<span class="step-result">✓ 완성품: 9개 조건 × 5시점 = 45개 데이터 포인트 시트.</span></li>
       <li><b>Colab에서 1차반응 + 아레니우스 피팅</b><span class="step-meta">⏱ 1~2h</span><br>Google Colab(<code>colab.research.google.com</code>)에 새 노트북:<br><code>import numpy as np, matplotlib.pyplot as plt</code><br><code>from scipy.stats import linregress</code><br><code>slope, intercept, r, *_ = linregress(t, np.log(C))</code><br><code>k = -slope  # 1차 속도상수</code><br>온도 3종에 대해 k 3개 → <code>linregress(1/T_K, np.log(k_arr))</code>로 기울기에서 <code>Ea = -slope * 8.314</code> (J/mol). pH별로 Ea 비교 — 산성에서 Ea가 낮으면 산촉매 가수분해의 증거.<span class="step-result">✓ 완성품: ln[C] vs t 그래프 9장 + 아레니우스 그래프 3장 + Ea 표 1장.</span></li>
-      <li><b>Vant Hoff 확장 + 학급 인포그래픽으로 마무리</b><span class="step-meta">⏱ 2~3h</span><br>심화: 카페인-카페인산 가수분해 평형이 있다면 ln K vs 1/T로 ΔH도 추정. Canva(<code>canva.com</code>)에서 A4 1매 — 구조는 <code>분자구조</code> → <code>반응식</code> → <code>k(T,pH) 표</code> → <code>Ea 비교 막대</code> → <code>일상 적용(커피 보관 온도)</code>. 화학 교과샘께 5분 면담으로 Ea 계산 한 번 점검 받기.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 5쪽 내외. 자기소개서 핵심 카드.</span></li>
+      <li><b>Vant Hoff 확장 + 학급 인포그래픽으로 마무리</b><span class="step-meta">⏱ 2~3h</span><br>심화: 카페인-카페인산 가수분해 평형이 있다면 ln K vs 1/T로 ΔH도 추정. Canva(<code>canva.com</code>)에서 A4 1매 — 구조는 <code>분자구조</code> → <code>반응식</code> → <code>k(T,pH) 표</code> → <code>Ea 비교 막대</code> → <code>일상 적용(커피 보관 온도)</code>. 화학 교과샘께 5분 면담으로 Ea 계산 한 번 점검 받기.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 5쪽 내외. 면접 핵심 카드.</span></li>
     </ol>
   </div>
   <div class="quest-meta">
@@ -622,7 +622,7 @@
       <li><b>한국고분자학회지에서 논문 1편 정독</b><span class="step-meta">⏱ 1~2h</span><br>한국고분자학회지(<code>polymer.or.kr</code>) 또는 DBpia(<code>dbpia.co.kr</code>)에서 검색어 <code>전분 가교 생분해</code> · <code>citric acid starch crosslink</code>로 1편 선정. 초록·결론·그림만 정독하고 메모: <code>전분 종류 / 가교제 / 가소제 / 인장강도 / 팽윤도 / 분해속도</code> 6열 표 1줄 추출. 2학년 본인 보고서와 같은 6열 표를 미리 비워두면 비교가 쉬워져.<span class="step-result">✓ 완성품: 논문 1편 요약 + 비교 표 빈 칸 1쪽.</span></li>
       <li><b>전분 필름 9종 캐스팅</b><span class="step-meta">⏱ 2~3h (분산: 건조 24h)</span><br>학교 화학실에서: 옥수수전분 5g + 증류수 100mL + 글리세롤(<b>5·10·20%</b>) + 시트르산(<b>0·2·5%</b>) → 80℃ 30분 가열 → 페트리디시에 캐스팅 → 60℃ 오븐 12h 또는 상온 24h 건조. 9개 조합. 안전: 시트르산은 무해하지만 가열 중 증기·튐 주의 — 보안경·장갑.<span class="step-result">✓ 완성품: 9종 필름 샘플 (각 3장씩 = 27장) + 두께 측정 표.</span></li>
       <li><b>팽윤도 측정 + Flory-Rehner 가교도 역산</b><span class="step-meta">⏱ 1~2h (24h 대기 포함)</span><br>각 필름 1g씩 잘라 무게 측정(W₀) → 증류수 100mL 비커에 24h 침지 → 표면 물기 제거 후 무게(W) → 팽윤도 <code>Q = (W - W₀)/W₀</code>. Colab에서 Flory-Rehner 식 단순화:<br><code>nu = -[ln(1-φ) + φ + χ·φ²] / (V₁·(φ^(1/3) - φ/2))</code><br>(χ ≈ 0.5, V₁=18 mL/mol 가정) — 가교제 함량 vs 가교도 nu 그래프 1장. 시트르산 5%에서 nu가 가장 큰지 확인.<span class="step-result">✓ 완성품: 팽윤도 표 + 가교제 농도 vs 가교도 그래프 1장.</span></li>
-      <li><b>α-아밀라아제 분해속도 + 3D 비교카드</b><span class="step-meta">⏱ 2~3h (분산: 4주 측정)</span><br>α-아밀라아제 0.1% 용액 또는 학교 토양 매립 환경에서 1·2·3·4주 차에 무게 측정. 주차별 질량 감소율 그래프. 마지막에 <b>3D 비교카드</b>: x축 가교제%, y축 가소제%, 점 크기=분해속도 — Canva A4 1매로 시각화. 화학 또는 과학 교과샘께 5분 면담으로 Flory-Rehner 식 한 번 점검 받기.<span class="step-result">✓ 완성품: 분해속도 그래프 + 3D 비교카드 A4 1매 + 보고서 5쪽. 자기소개서 '2→3학년 키워드 수직 연계' 핵심 자료.</span></li>
+      <li><b>α-아밀라아제 분해속도 + 3D 비교카드</b><span class="step-meta">⏱ 2~3h (분산: 4주 측정)</span><br>α-아밀라아제 0.1% 용액 또는 학교 토양 매립 환경에서 1·2·3·4주 차에 무게 측정. 주차별 질량 감소율 그래프. 마지막에 <b>3D 비교카드</b>: x축 가교제%, y축 가소제%, 점 크기=분해속도 — Canva A4 1매로 시각화. 화학 또는 과학 교과샘께 5분 면담으로 Flory-Rehner 식 한 번 점검 받기.<span class="step-result">✓ 완성품: 분해속도 그래프 + 3D 비교카드 A4 1매 + 보고서 5쪽. 면접 '2→3학년 키워드 수직 연계' 핵심 자료.</span></li>
     </ol>
   </div>
   <div class="quest-meta">

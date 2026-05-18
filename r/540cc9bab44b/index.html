@@ -448,7 +448,7 @@
     <div class="signal-label">수학(1학년)·영어(2학년) 일부</div>
     <div style="font-size:11px;color:var(--ink-muted);">상투 표현 누적</div>
   </div>
-  <div class="signal-detail"><span class='h-구체화'>1학년 수학에 '실생활과 연관된 파워포인트 자료 발표'가 적혀 있지만,</span> 그 앞뒤가 <span class='stale'>늘 우수한 성적을 유지·문제해결력과 창의성을 발휘·앞으로도 지속적인 자기 발전을 위한 노력</span>으로 채워져 학생 개인이 보이지 않아. 영어Ⅱ도 본인 진로와 잘 묶였지만 마무리가 <span class='stale'>실생활과의 밀접성이 높다</span>로 닫혀 있어.<div class="signal-fix">💡 <b>걱정 마, 1·2학년은 이미 출력됐어.</b> 면접·자기소개서에서 '내가 수학으로 어떤 의료 문제를 풀어봤는지'를 약물반감기·법랑질 미분 사례로 직접 풀어주면 충분히 만회돼.</div></div>
+  <div class="signal-detail"><span class='h-구체화'>1학년 수학에 '실생활과 연관된 파워포인트 자료 발표'가 적혀 있지만,</span> 그 앞뒤가 <span class='stale'>늘 우수한 성적을 유지·문제해결력과 창의성을 발휘·앞으로도 지속적인 자기 발전을 위한 노력</span>으로 채워져 학생 개인이 보이지 않아. 영어Ⅱ도 본인 진로와 잘 묶였지만 마무리가 <span class='stale'>실생활과의 밀접성이 높다</span>로 닫혀 있어.<div class="signal-fix">💡 <b>걱정 마, 1·2학년은 이미 출력됐어.</b> 면접에서 '내가 수학으로 어떤 의료 문제를 풀어봤는지'를 약물반감기·법랑질 미분 사례로 직접 풀어주면 충분히 만회돼.</div></div>
 </div>
 <div class="signal-row">
   <span class="signal-dot">🔴</span>
@@ -548,7 +548,7 @@
       <li><b>약학정보원에서 한 약의 반감기 찾기</b><span class="step-meta">⏱ 30분</span><br>약학정보원(<code>health.kr</code>) 접속 → 상단 "의약품 검색" → <code>아세트아미노펜</code> 입력 → 결과의 "약리정보" 또는 "허가사항" 탭에서 <b>반감기(half-life)</b> 항목을 찾아 메모. 보통 2~3시간으로 표기됨. 식약처 의약품안전나라(<code>nedrug.mfds.go.kr</code>)도 같은 정보 제공.<span class="step-result">✓ 완성품: "아세트아미노펜 반감기 = 2.5h" 한 줄 메모. 이 숫자가 모든 계산의 출발점.</span></li>
       <li><b>Colab에서 단일 투약 농도 곡선 그리기</b><span class="step-meta">⏱ 30~60분</span><br>Google Colab(<code>colab.research.google.com</code>)에 새 노트북 → 다음 코드 입력:<br><code>import numpy as np, matplotlib.pyplot as plt</code><br><code>t = np.linspace(0, 24, 240)</code><br><code>k = np.log(2) / 2.5  # 반감기 2.5h → 분해상수</code><br><code>C = 100 * np.exp(-k*t)  # 초기농도 100mg</code><br><code>plt.plot(t, C); plt.xlabel('Time (h)'); plt.ylabel('C (mg/L)')</code><br>2학년 수학Ⅰ에서 그렸던 타이레놀 일반형(4h)·이알형(8h)도 같은 코드로 두 줄 겹쳐 그려보기. 반감기를 4·8·12h로 바꿔 그래프 3장 비교.<span class="step-result">✓ 완성품: 단일 투약 농도-시간 곡선 .png 3장 + 코드 .ipynb.</span></li>
       <li><b>다회 투약 시뮬레이션 — 정상상태 도달 관찰</b><span class="step-meta">⏱ 1~2h</span><br>for 루프로 일정 간격 반복 투약을 더해보기:<br><code>doses = [0, 6, 12, 18, 24, 30, 36, 42, 48]  # 6h 간격</code><br><code>C_total = np.zeros_like(t)</code><br><code>for d in doses:</code><br><code>&nbsp;&nbsp;mask = t &gt;= d</code><br><code>&nbsp;&nbsp;C_total[mask] += 100 * np.exp(-k*(t[mask]-d))</code><br>그래프에서 <b>정상상태(steady state)</b>가 보이는 순간을 직접 확인. 변수 조합: 반감기 3종 × 복용간격 3종 → 그래프 9장 + Cmax/Cmin 표 1장.<span class="step-result">✓ 완성품: 다회 투약 그래프 9장 + Cmax/Cmin/축적계수 산출 표 1장.</span></li>
-      <li><b>임상 투약 매뉴얼 A4 1쪽으로 정리</b><span class="step-meta">⏱ 1~2h</span><br>표 형식 <code>약물명 / 반감기 / 권장 간격 / Cmax / 위험 신호</code>로 일반의약품 3~5종 정리. 마지막 단락에 "신장 기능 30% 저하 환자라면 간격을 어떻게 늘릴까?"를 본인 답으로 한 단락. 수학 교과샘께 그래프 해석 한 번 점검 받기.<span class="step-result">✓ 완성품: A4 1쪽 매뉴얼. 의대 자기소개서·면접 핵심 자료로 직결.</span></li>
+      <li><b>임상 투약 매뉴얼 A4 1쪽으로 정리</b><span class="step-meta">⏱ 1~2h</span><br>표 형식 <code>약물명 / 반감기 / 권장 간격 / Cmax / 위험 신호</code>로 일반의약품 3~5종 정리. 마지막 단락에 "신장 기능 30% 저하 환자라면 간격을 어떻게 늘릴까?"를 본인 답으로 한 단락. 수학 교과샘께 그래프 해석 한 번 점검 받기.<span class="step-result">✓ 완성품: A4 1쪽 매뉴얼. 의대 면접 핵심 자료로 직결.</span></li>
     </ol>
   </div>
   <div class="quest-meta">

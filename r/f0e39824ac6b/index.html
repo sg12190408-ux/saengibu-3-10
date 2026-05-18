@@ -456,7 +456,7 @@
     <div class="signal-label">1학년 수학</div>
     <div style="font-size:11px;color:var(--ink-muted);">상투 표현 누적</div>
   </div>
-  <div class="signal-detail"><span class='h-구체화'>자유주제탐구활동에서 순열·조합으로 유전정보·돌연변이를 분석한 한 줄</span>은 진로 직결로 좋아. 그런데 그 앞이 <span class='stale'>능력이 뛰어남·열정과 끈기가 돋보임·문제 해결력을 발휘하고·응용력이 돋보임·인상적임</span>으로 가득해 학생 개인이 보이지 않아.<div class="signal-fix">💡 <b>걱정 마, 1학년 수학은 이미 마감</b>이야. 다만 자기소개서·면접에서 '내가 1학년 수학 자유주제로 무엇을 다뤘는지'를 한 문장(순열·조합 → 유전 변이 다양성)으로 미리 준비해두자. 2학년 수학Ⅰ·Ⅱ가 이미 충분히 만회.</div></div>
+  <div class="signal-detail"><span class='h-구체화'>자유주제탐구활동에서 순열·조합으로 유전정보·돌연변이를 분석한 한 줄</span>은 진로 직결로 좋아. 그런데 그 앞이 <span class='stale'>능력이 뛰어남·열정과 끈기가 돋보임·문제 해결력을 발휘하고·응용력이 돋보임·인상적임</span>으로 가득해 학생 개인이 보이지 않아.<div class="signal-fix">💡 <b>걱정 마, 1학년 수학은 이미 마감</b>이야. 다만 면접에서 '내가 1학년 수학 자유주제로 무엇을 다뤘는지'를 한 문장(순열·조합 → 유전 변이 다양성)으로 미리 준비해두자. 2학년 수학Ⅰ·Ⅱ가 이미 충분히 만회.</div></div>
 </div>
   </div>
 </div></section>
@@ -548,7 +548,7 @@
       <li><b>2학년 BT균 실험 데이터 재정리</b><span class="step-meta">⏱ 30분~1h</span><br>2학년 과제연구 노트·발표자료에서 BT균 농도(예: 10⁴·10⁵·10⁶ CFU/mL)별 모기 유충 사망 마릿수를 표로 추출. 시간축을 0·12·24·48h로 재배치하고 <code>농도 / 시간 / 누적 사망률(%)</code> 형식의 CSV 1장을 Google Sheets로 정리. 누락된 시간대는 빈 칸으로 두고 표기만 명확하게.<span class="step-result">✓ 완성품: BT균 시계열 사망률 CSV 1장 + 원자료 출처 메모. 다음 모델링의 기준선.</span></li>
       <li><b>Colab에서 1차 사멸 곡선 피팅</b><span class="step-meta">⏱ 1~2h</span><br>Google Colab(<code>colab.research.google.com</code>)에 새 노트북 → CSV 업로드 후 다음 코드:<br><code>import numpy as np, pandas as pd, matplotlib.pyplot as plt</code><br><code>from scipy.optimize import curve_fit</code><br><code>def surv(t, k): return np.exp(-k*t)  # 1차 사멸</code><br><code>popt, _ = curve_fit(surv, t, S)  # k = 사멸상수</code><br>각 농도별 k를 구하고 LT₅₀ = ln2/k로 환산. 농도별 LT₅₀ 막대그래프 1장이 핵심 결과야.<span class="step-result">✓ 완성품: 농도별 사멸 곡선 .png 3종 + LT₅₀ 비교 표 1장 + .ipynb.</span></li>
       <li><b>온도 변수 추가 + Q₁₀ 산출</b><span class="step-meta">⏱ 1~2h</span><br>상온(25℃) 데이터와 정화조 평균(15℃) 데이터를 모은 뒤 같은 농도에서 사멸상수 k를 비교. <code>Q10 = (k_25/k_15)**(10/(25-15))</code>로 온도계수 계산. (도전) <code>scipy.stats.linregress</code>로 Arrhenius 그래프(ln k vs 1/T)를 그려 활성화 에너지 Eₐ까지 산출하면 깊이 ↑. 정화조 운용 한계 농도를 한 줄 결론으로.<span class="step-result">✓ 완성품: Q₁₀ 값 + Arrhenius 그래프 1장 + "정화조 운용 시 권장 농도" 한 줄 결론.</span></li>
-      <li><b>한 장 인포그래픽 + 동아리 공유</b><span class="step-meta">⏱ 2~3h</span><br>Canva(<code>canva.com</code>) 또는 미리캔버스(<code>miricanvas.com</code>)에서 A4 1매 → 구조는 <code>실험 데이터</code> → <code>모델 피팅(LT₅₀)</code> → <code>온도 보정(Q₁₀)</code> → <code>현장 적용 권고</code>. 동아리 스타브릿지 또는 과학 교과샘께 5분 발표로 검토 받기. NCBI PubMed(<code>pubmed.ncbi.nlm.nih.gov</code>)에서 <code>Bt mosquitocidal LT50</code> 논문 1편의 LT₅₀ 값과 비교 한 줄 추가.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 발표 메모. 자기소개서·면접의 핵심 자료로 직결.</span></li>
+      <li><b>한 장 인포그래픽 + 동아리 공유</b><span class="step-meta">⏱ 2~3h</span><br>Canva(<code>canva.com</code>) 또는 미리캔버스(<code>miricanvas.com</code>)에서 A4 1매 → 구조는 <code>실험 데이터</code> → <code>모델 피팅(LT₅₀)</code> → <code>온도 보정(Q₁₀)</code> → <code>현장 적용 권고</code>. 동아리 스타브릿지 또는 과학 교과샘께 5분 발표로 검토 받기. NCBI PubMed(<code>pubmed.ncbi.nlm.nih.gov</code>)에서 <code>Bt mosquitocidal LT50</code> 논문 1편의 LT₅₀ 값과 비교 한 줄 추가.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 발표 메모. 면접의 핵심 자료로 직결.</span></li>
     </ol>
   </div>
   <div class="quest-meta">

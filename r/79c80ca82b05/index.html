@@ -455,7 +455,7 @@
     <div class="signal-label">1학년 수학</div>
     <div style="font-size:11px;color:var(--ink-muted);">상투 표현 누적</div>
   </div>
-  <div class="signal-detail">"인공지능 개발자 진로로 경우의 수와 확률에 관심" 한 줄은 있지만, 그 앞뒤가 <span class='stale'>호기심을 가지고 학습에 참여·문제 해결 능력에서 많은 발전이 기대됨·끝까지 해결하려는 의지·이해력과 문제 해결 역량을 지님</span>으로 가득 채워져 학생 개인이 보이지 않아.<div class="signal-fix">💡 <b>걱정 마, 이미 1학년이라 수정은 불가능해</b>. 다만 면접·자기소개서에서 '내가 1학년 수학에서 어떤 진로 탐구를 했는지' 한 문장(예: 자연어 처리에서 만난 확률·순열 사례)을 미리 준비해두자. 2학년 수학Ⅰ 손실함수·기하 의류 패턴으로 충분히 만회됨.</div></div>
+  <div class="signal-detail">"인공지능 개발자 진로로 경우의 수와 확률에 관심" 한 줄은 있지만, 그 앞뒤가 <span class='stale'>호기심을 가지고 학습에 참여·문제 해결 능력에서 많은 발전이 기대됨·끝까지 해결하려는 의지·이해력과 문제 해결 역량을 지님</span>으로 가득 채워져 학생 개인이 보이지 않아.<div class="signal-fix">💡 <b>걱정 마, 이미 1학년이라 수정은 불가능해</b>. 다만 면접에서 '내가 1학년 수학에서 어떤 진로 탐구를 했는지' 한 문장(예: 자연어 처리에서 만난 확률·순열 사례)을 미리 준비해두자. 2학년 수학Ⅰ 손실함수·기하 의류 패턴으로 충분히 만회됨.</div></div>
 </div>
   </div>
 </div></section>
@@ -493,7 +493,7 @@
   <div class="action-num">1</div>
   <div class="action-meta">아트테크 · AI×의류 차별화</div>
   <h3 class="action-title">'AI 의류 분류 → 가상피팅' 1쪽 인터랙션 시나리오</h3>
-  <p class="action-body">2학년 인공지능 기초의 의류 15종 분류 모델 + 가상피팅 모델 한계 분석 + Y2K 댓글 시각화를 한 사용자 시나리오(고객이 사진을 올리면 분류→체형 입력→추천→피팅 시각화)로 묶어 1쪽 인포그래픽으로 정리해보자. 입력→모델→출력→윤리 체크포인트까지. 면접·자기소개서 핵심 사례로 직결되는 한 장.</p>
+  <p class="action-body">2학년 인공지능 기초의 의류 15종 분류 모델 + 가상피팅 모델 한계 분석 + Y2K 댓글 시각화를 한 사용자 시나리오(고객이 사진을 올리면 분류→체형 입력→추천→피팅 시각화)로 묶어 1쪽 인포그래픽으로 정리해보자. 입력→모델→출력→윤리 체크포인트까지. 면접 핵심 사례로 직결되는 한 장.</p>
   <span class="action-deadline">📅 ~ 5월 16일</span>
 </div>
 <div class="action-card">
@@ -547,7 +547,7 @@
       <li><b>키워드 5쌍 + 라벨링 항목 표 설계</b><span class="step-meta">⏱ 30분</span><br>본인이 봤을 때 'AI가 편향될 것 같은' 의류·체형 키워드 5쌍을 정해 메모. 예: <code>한국형 vs 서구형</code> · <code>여성복 vs 유니섹스</code> · <code>10대 vs 30대</code> · <code>오피스 vs 스트릿</code> · <code>플러스사이즈 vs 슬림</code>. 다음으로 라벨링 항목 4개 설계: <code>주조색 / 실루엣(A·H·X) / 노출도(1~5) / 허리비율</code>.<span class="step-result">✓ 완성품: A4 반쪽 분량의 키워드 5쌍 × 라벨링 4항목 표 1장. 모든 실험의 기준선.</span></li>
       <li><b>HuggingFace에서 무료 Stable Diffusion으로 30장 생성</b><span class="step-meta">⏱ 1~2h</span><br>HuggingFace Spaces(<code>huggingface.co/spaces</code>)에서 <code>Stable Diffusion XL</code> 검색 → 무료 데모로 들어가 키워드 1쌍당 6~10장씩 총 30~50장 생성. 같은 프롬프트라도 seed가 달라 결과가 다르다는 점 메모. Colab에서 직접 돌리고 싶으면 <code>diffusers</code> 라이브러리 한 줄: <code>from diffusers import StableDiffusionPipeline</code>.<span class="step-result">✓ 완성품: 키워드별 폴더에 정리된 이미지 30~50장 + 프롬프트·seed 기록 시트.</span></li>
       <li><b>구글 시트로 정량 라벨링 → 편향 점수 산출</b><span class="step-meta">⏱ 2~3h</span><br>Google Sheets에 1행=이미지 1장으로 키워드·실루엣·노출도·허리비율 채우기. 함수 한 줄로 평균: <code>=AVERAGEIF(A:A,"한국형",D:D)</code>. 두 키워드 그룹의 평균 차이가 편향 점수. 결과를 막대그래프로: 어떤 항목이 가장 크게 갈렸는지 한눈에. 본인 라벨링이 주관적인 점은 보고서 한계로 명시.<span class="step-result">✓ 완성품: 라벨링 시트 1개 + 편향 점수 막대그래프 .png 1장.</span></li>
-      <li><b>debias 프롬프트 적용 후 비교 + 인포그래픽 1매</b><span class="step-meta">⏱ 2~3h</span><br>같은 5쌍에 'diverse body types, multiple ethnicities, varied silhouettes' 한 줄을 추가해 다시 30장 생성 → 1·2단계 점수와 비교. Canva(<code>canva.com</code>)에서 A4 1매 인포그래픽: <code>문제(편향) → 측정(점수) → 보정(프롬프트) → 결과(개선/한계)</code> 4단 구조. 학급 게시판·동아리방 공유로 '발' 단계 완성. 미술·정보 교과샘께 검토 한 번.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 6쪽. 면접·자기소개서 핵심 자료로 직결.</span></li>
+      <li><b>debias 프롬프트 적용 후 비교 + 인포그래픽 1매</b><span class="step-meta">⏱ 2~3h</span><br>같은 5쌍에 'diverse body types, multiple ethnicities, varied silhouettes' 한 줄을 추가해 다시 30장 생성 → 1·2단계 점수와 비교. Canva(<code>canva.com</code>)에서 A4 1매 인포그래픽: <code>문제(편향) → 측정(점수) → 보정(프롬프트) → 결과(개선/한계)</code> 4단 구조. 학급 게시판·동아리방 공유로 '발' 단계 완성. 미술·정보 교과샘께 검토 한 번.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 6쪽. 면접 핵심 자료로 직결.</span></li>
     </ol>
   </div>
   <div class="quest-meta">
@@ -623,7 +623,7 @@
       <li><b>공공데이터 한 줄 받아오기 + 환경부 폐기 톤 메모</b><span class="step-meta">⏱ 30~60분</span><br>공공데이터포털(<code>data.go.kr</code>)에서 <code>의류 출하</code> 또는 <code>소비자물가지수 의류</code> 검색 → Excel 다운로드. 환경부 자원순환정보시스템(<code>recycling-info.or.kr</code>)에서 <code>의류 폐기물 발생량</code> 연도별 통계 한 줄 메모(예: "연 3X만 톤"). 이 숫자가 보고서의 임팩트 지점.<span class="step-result">✓ 완성품: 12개월 의류 출하 데이터 .xlsx + 환경부 폐기 톤 한 줄 메모.</span></li>
       <li><b>Colab에서 이동평균·다중회귀 두 모델 돌려보기</b><span class="step-meta">⏱ 1~2h</span><br>Google Colab 새 노트북 → pandas·sklearn 임포트:<br><code>import pandas as pd</code><br><code>from sklearn.linear_model import LinearRegression</code><br><code>df = pd.read_csv('clothes.csv')</code><br><code>df['MA3'] = df['sales'].rolling(3).mean()  # 3개월 이동평균</code><br>다중회귀는 <code>X = df[['month','price','search_trend']]</code> · <code>y = df['sales']</code>로 <code>LinearRegression().fit(X, y)</code>. 두 모델의 예측치를 같은 그래프에 겹쳐 그려.<span class="step-result">✓ 완성품: Colab 노트북 1개(.ipynb) + 모델 비교 그래프 .png 1장.</span></li>
       <li><b>간단 신경망 + MAPE 비교 표 + 절감량 추정</b><span class="step-meta">⏱ 2~3h</span><br><code>sklearn.neural_network.MLPRegressor</code> 한 줄 추가:<br><code>MLPRegressor(hidden_layer_sizes=(8,8), max_iter=2000).fit(X, y)</code><br>세 모델의 MAPE 계산: <code>np.mean(np.abs((y-pred)/y))*100</code>. <b>"가장 좋은 모델로 예측했을 때 과잉 생산이 N% 줄어 → 폐기 X톤 절감"</b> 한 줄 추정. 본인이 탐구했던 TSP·유전 알고리즘은 "예측 후 물류 동선 최적화"로 자연 연결되니 보고서 1쪽 추가.<span class="step-result">✓ 완성품: 모델 3종 비교 표(MAPE·절감량) + TSP 결합 1쪽 사례.</span></li>
-      <li><b>정책 제안형 보고서 + 학급·진로샘 공유</b><span class="step-meta">⏱ 2~3h</span><br>보고서 6~8쪽 구조: <code>문제(SPA 소각) → 데이터(공공·환경부) → 모델 3종 비교 → 절감 시뮬레이션 → TSP 물류 결합 → 정책 제안(EU DPP·국내 적용)</code>. 마무리는 "고등학생 수준 한계"를 솔직히 명시해 학술 윤리도 챙김. 진로샘께 5~10분 면담으로 검토받고, 학급·진로 동아리에 1쪽 요약본 공유.<span class="step-result">✓ 완성품: 보고서 6~8쪽 + 1쪽 요약 인포그래픽 A4 1매. 면접·자기소개서 핵심 자료.</span></li>
+      <li><b>정책 제안형 보고서 + 학급·진로샘 공유</b><span class="step-meta">⏱ 2~3h</span><br>보고서 6~8쪽 구조: <code>문제(SPA 소각) → 데이터(공공·환경부) → 모델 3종 비교 → 절감 시뮬레이션 → TSP 물류 결합 → 정책 제안(EU DPP·국내 적용)</code>. 마무리는 "고등학생 수준 한계"를 솔직히 명시해 학술 윤리도 챙김. 진로샘께 5~10분 면담으로 검토받고, 학급·진로 동아리에 1쪽 요약본 공유.<span class="step-result">✓ 완성품: 보고서 6~8쪽 + 1쪽 요약 인포그래픽 A4 1매. 면접 핵심 자료.</span></li>
     </ol>
   </div>
   <div class="quest-meta">

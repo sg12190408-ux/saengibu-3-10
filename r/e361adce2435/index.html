@@ -402,7 +402,7 @@
   <span class="moment-pattern">패턴 ① + ② 키워드 연계형</span>
   <h3 style="font-size:16px;font-weight:800;">회로 설계자 vs 재료공학 연구원 — 직무 비교 + AI 반도체 산업 분석</h3>
   <p class="moment-quote">"반도체 회로 설계자와 재료공학 연구원을 주요 직업군으로 선정해 직무별 역할과 요구 역량을 비교 분석함. 회로 설계는 EDA 시뮬레이션, 재료공학은 신소재 개발과 물성 개선이 핵심임을 파악. 'AI 반도체 개발 경쟁 심화'를 주제로 NPU 설계 필요성, 데이터센터 전력·냉각 비용, 엣지 AI 저전력 반도체 수요까지 산업·정치·환경 관점으로 분석."</p>
-  <div class="moment-why">진로 전환의 결정적 한 줄. '왜 회로 설계가 아니라 재료공학을 골랐는가'에 대한 본인의 정답이 여기 있어. 면접·자소서에서 그대로 인용 가능한 1순위 자료.</div>
+  <div class="moment-why">진로 전환의 결정적 한 줄. '왜 회로 설계가 아니라 재료공학을 골랐는가'에 대한 본인의 정답이 여기 있어. 면접에서 그대로 인용 가능한 1순위 자료.</div>
 </div></div>
 </div></section>
 
@@ -494,7 +494,7 @@
   <div class="action-num">1</div>
   <div class="action-meta">재료공학 차별화 · 키워드 수직 연계</div>
   <h3 class="action-title">'반도체→신소재 전환' 1쪽 인포그래픽</h3>
-  <p class="action-body">1학년 N/P형 반도체 회로 실습 + 탄소나노튜브 나노전자소자 + 트랜지스터 발명사 → 2학년 재료공학 영어 본문 기획 + 신소재 열전도율 모델링 + 그래핀 브릴루앙 존을 한 장의 타임라인 인포그래픽으로 정리. '회로 레벨 → 재료 레벨'이라는 한 줄 헤드라인으로. 자소서·면접 핵심 자료 직결.</p>
+  <p class="action-body">1학년 N/P형 반도체 회로 실습 + 탄소나노튜브 나노전자소자 + 트랜지스터 발명사 → 2학년 재료공학 영어 본문 기획 + 신소재 열전도율 모델링 + 그래핀 브릴루앙 존을 한 장의 타임라인 인포그래픽으로 정리. '회로 레벨 → 재료 레벨'이라는 한 줄 헤드라인으로. 면접 핵심 자료 직결.</p>
   <span class="action-deadline">~ 5월 16일</span>
 </div>
 <div class="action-card">
@@ -548,7 +548,7 @@
       <li><b>금속 3종 시편 준비 + 측정 회로 구상</b><span class="step-meta">⏱ 30분</span><br>구리·알루미늄·스테인리스 막대(직경 6~10mm, 길이 20cm)를 학교 과학실 또는 공구상에서 확보. 검색 키워드 <code>아두이노 DS18B20 다중 온도 센서</code>로 회로 예시 1건 다운로드. 측정 위치 5점(2cm·6cm·10cm·14cm·18cm)을 막대에 마킹.<span class="step-result">✓ 완성품: 시편 3종 + 측정 위치 표시 사진 1장. 다음 단계 출발점.</span></li>
       <li><b>Tinkercad에서 회로 시뮬레이션 → 실측</b><span class="step-meta">⏱ 1~2h</span><br>Tinkercad(<code>tinkercad.com</code>) Circuits에서 아두이노 + DS18B20 5개 회로 가상 조립 → 코드 검증. 그 후 실험실에서 한쪽 끝 60℃ 항온수조 가열, 정상상태 도달 후 5점 온도 30초마다 10분간 기록. 시편 3종 반복.<span class="step-result">✓ 완성품: 시편별 거리-온도 데이터 .csv 3개 + 정상상태 그래프 3장.</span></li>
       <li><b>Colab에서 푸리에 식으로 k 추정 + FDM 시뮬레이션</b><span class="step-meta">⏱ 2h</span><br>Google Colab(<code>colab.research.google.com</code>)에서 새 노트북:<br><code>import numpy as np, matplotlib.pyplot as plt</code><br><code>x = np.array([2,6,10,14,18])  # cm</code><br><code>T = np.array([58,52,46,40,34])  # ℃, 측정값</code><br><code>slope, _ = np.polyfit(x, T, 1)</code><br><code>k = -q_in / slope  # q_in: 입력 열류 (W/m²)</code><br>이어서 FDM 1차원 시뮬레이션 코드(50칸 격자, dt=0.1s)로 정상상태 곡선을 그려 실측과 한 그래프에 겹치기. 시편 3종 모두 반복.<span class="step-result">✓ 완성품: k 추정값 표(문헌값 비교 포함) + FDM vs 실험 비교 그래프 3장 + 코드 .ipynb.</span></li>
-      <li><b>오차 원인 분석 + A4 인포그래픽 마무리</b><span class="step-meta">⏱ 2~3h</span><br>측정 k가 문헌값보다 낮으면 열손실·접촉저항이 원인. Canva(<code>canva.com</code>) 또는 미리캔버스에서 A4 1매: <code>측정 회로</code> → <code>거리-온도 그래프</code> → <code>k 추정 표</code> → <code>오차 원인 다이어그램</code>. 물리 또는 수학 교과샘께 5분 검토 받기.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 6쪽. 재료공학 자기소개서 핵심 자료.</span></li>
+      <li><b>오차 원인 분석 + A4 인포그래픽 마무리</b><span class="step-meta">⏱ 2~3h</span><br>측정 k가 문헌값보다 낮으면 열손실·접촉저항이 원인. Canva(<code>canva.com</code>) 또는 미리캔버스에서 A4 1매: <code>측정 회로</code> → <code>거리-온도 그래프</code> → <code>k 추정 표</code> → <code>오차 원인 다이어그램</code>. 물리 또는 수학 교과샘께 5분 검토 받기.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 6쪽. 재료공학 면접 핵심 자료.</span></li>
     </ol>
   </div>
   <div class="quest-meta">
@@ -624,7 +624,7 @@
       <li><b>다이오드 1개 + 측정 회로 구상</b><span class="step-meta">⏱ 30분</span><br>1N4148 다이오드와 1kΩ 저항을 과학실에서 확보(또는 학교 메이커실). 검색 키워드 <code>반도체 도핑 PN접합</code> · <code>다이오드 I-V 측정 회로</code>로 회로도 1장 확보. 가변저항으로 인가 전압을 0~1V 변화시키고 V·I를 측정하는 단순 회로 그리기.<span class="step-result">✓ 완성품: 회로도 손그림 1장 + 부품 사진. 다음 단계의 청사진.</span></li>
       <li><b>LTspice에서 SPICE 시뮬레이션 먼저</b><span class="step-meta">⏱ 1~2h</span><br>LTspice(<code>analog.com/ltspice</code>) 무료 다운로드 → 1N4148 다이오드 회로 그리기 → DC sweep 0~1V 분석. 출력 그래프에서 순방향 0.6V 부근부터 지수 상승 확인. 명령:<br><code>.dc V1 0 1 0.01</code><br><code>.model D1N4148 D(Is=2.52n N=1.752)</code><br>그래프를 .png로 저장. n·Is 값을 메모.<span class="step-result">✓ 완성품: LTspice 회로 .asc + I-V 시뮬레이션 그래프 .png 1장.</span></li>
       <li><b>실측 I-V + 다이오드 방정식 피팅</b><span class="step-meta">⏱ 2~3h</span><br>가변저항 돌려가며 V를 0~0.8V로 0.05V 간격 측정, 각 V에서 I 기록(15~17점). Google Colab에서 Colab(<code>colab.research.google.com</code>)에 데이터 입력 후 다이오드 방정식 피팅:<br><code>from scipy.optimize import curve_fit</code><br><code>def diode(V, I0, n): return I0*(np.exp(V/(n*0.0259))-1)</code><br><code>popt, _ = curve_fit(diode, V, I, p0=[1e-9, 1.5])</code><br>실측 n·I₀를 시뮬레이션값과 비교. 온도 3종(상온·40℃·60℃)에서 반복 측정하면 깊이 ↑.<span class="step-result">✓ 완성품: 실측-시뮬 비교 그래프 .png 1장 + n·I₀ 추정 표 + 코드 .ipynb.</span></li>
-      <li><b>'도핑 → PN접합 → I-V' 한눈에 보기 인포그래픽</b><span class="step-meta">⏱ 2~3h</span><br>Canva(<code>canva.com</code>) A4 1매: <code>실리콘 결정구조</code> → <code>N형/P형 도핑</code> → <code>공핍층·내부전위</code> → <code>다이오드 I-V 곡선</code>. 한국반도체디스플레이기술학회지·KCI(<code>kci.go.kr</code>)에서 검색 키워드 <code>반도체 도핑</code> 리뷰논문 1편 인용. 물리 교과샘께 5분 검토 — 회로(소자) vs 재료(도핑) 두 시각이 한 장에 있는지 점검.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 6쪽. 학종 자기소개서 '회로→재료 전환 서사' 핵심 자료.</span></li>
+      <li><b>'도핑 → PN접합 → I-V' 한눈에 보기 인포그래픽</b><span class="step-meta">⏱ 2~3h</span><br>Canva(<code>canva.com</code>) A4 1매: <code>실리콘 결정구조</code> → <code>N형/P형 도핑</code> → <code>공핍층·내부전위</code> → <code>다이오드 I-V 곡선</code>. 한국반도체디스플레이기술학회지·KCI(<code>kci.go.kr</code>)에서 검색 키워드 <code>반도체 도핑</code> 리뷰논문 1편 인용. 물리 교과샘께 5분 검토 — 회로(소자) vs 재료(도핑) 두 시각이 한 장에 있는지 점검.<span class="step-result">✓ 완성품: A4 인포그래픽 1매 + 보고서 6쪽. 학종 면접 '회로→재료 전환 서사' 핵심 자료.</span></li>
     </ol>
   </div>
   <div class="quest-meta">
